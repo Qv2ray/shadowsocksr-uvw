@@ -40,7 +40,9 @@ private:
         uv_gettimeofday(&tv);
         double now = tv.tv_sec+tv.tv_usec*1e-6;
         if (now - last > 0.5) {
+#ifdef SSR_UVW_WITH_QT
             send_traffic_stat(tx, rx);
+#endif
             last = now;
         }
     }

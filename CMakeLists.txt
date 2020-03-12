@@ -6,18 +6,15 @@
 # Please see the COPYING file in this distribution for license details.
 # ----------------------------------------------------------------------
 
-set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.14)
 set(PROJECT_NAME shadowsocks-libev)
-set(RELEASE_DATE 2015-09-03)
 project(${PROJECT_NAME})
 
-set(VERSION 2.5.6)
+set(VERSION 0.0.1)
 
 
 set(with_crypto_library "openssl" CACHE STRING "build with the given crypto library, TYPE=openssl|polarssl|mbedtls default=openssl")
-
+set(SSR_UVW_WITH_QT 1 CACHE BOOL "build with qt")
 
 
 include ( cmake/dist.cmake )

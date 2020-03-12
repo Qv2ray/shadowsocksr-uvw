@@ -19,7 +19,9 @@
  * along with shadowsocks-libev; see the file COPYING. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#if SSR_UVW_WITH_QT
 #include "qt_ui_log.h"
+#endif
 #if defined(USE_CRYPTO_OPENSSL)
 
 #include <openssl/opensslv.h>
@@ -222,6 +224,36 @@ void *ss_realloc(void *ptr, size_t new_size);
         free(ptr);       \
         ptr = NULL;      \
     } while (0)
+
+#ifdef SSR_UVW_WITH_QT
+#undef LOGI
+#undef LOGE
+#define LOGI(format, ...)                                                        \
+    do {                                                                         \
+         {                                                   \
+            time_t now = time(NULL);                                             \
+            char timestr[20];                                                    \
+            strftime(timestr, 20, TIME_FORMAT, localtime(&now));                 \
+            qt_ui_log_info( " %s INFO: " format , timestr, ## __VA_ARGS__); \
+             }                                                   \
+    }                                                                            \
+    while (0)
+
+#define LOGE(format, ...)                                        \
+    do {                                                         \
+         {                                   \
+            time_t now = time(NULL);                             \
+            char timestr[20];                                    \
+            strftime(timestr, 20, TIME_FORMAT, localtime(&now)); \
+            qt_ui_log_error( " %s ERROR: " format , timestr, \
+                    ## __VA_ARGS__);                             \
+         }                                   \
+    }                                                            \
+    while (0)
+
+#endif
+
+
 
 #ifdef __cplusplus
 }

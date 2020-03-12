@@ -1,14 +1,14 @@
 # Build args
 
 if (${with_crypto_library} STREQUAL "openssl")
-    find_package(ZLIB REQUIRED)
+#  find_package(ZLIB REQUIRED)
     find_package(OpenSSL REQUIRED)
     set(USE_CRYPTO_OPENSSL 1)
     set(LIBCRYPTO
-            ${ZLIB_LIBRARIES}
+#${ZLIB_LIBRARIES}
             ${OPENSSL_CRYPTO_LIBRARY})
     message("found open ssl")
-    include_directories(${ZLIB_INCLUDE_DIR})
+#  include_directories(${ZLIB_INCLUDE_DIR})
     include_directories(${OPENSSL_INCLUDE_DIR})
 
     list ( APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR})

@@ -2,8 +2,14 @@
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(SSR_UVW_WITH_QT)
+message("find Qt5")
 find_package(Qt5 COMPONENTS Core REQUIRED)
+endif()
+
 set(USE_CRYPTO_OPENSSL 1)
+
+if(SSR_UVW_WITH_QT)
 set(CMAKE_AUTOMOC ON)
 set(SOURCE_FILES_LOCAL
 utils.h
@@ -51,24 +57,69 @@ uthash.h
 Buffer.cpp
 cache.c
 )
+else()
+set(SOURCE_FILES_LOCAL
+utils.h
+obfs/crc32.h
+obfs/auth.c
+obfs/auth.h
+obfs/obfs.c
+obfs/obfs.h
+obfs/base64.h
+obfs/auth_chain.h
+obfs/auth_chain.c
+obfs/verify.c
+obfs/http_simple.h
+obfs/obfsutil.c
+obfs/base64.c
+obfs/tls1.2_ticket.h
+obfs/verify.h
+obfs/http_simple.c
+obfs/tls1.2_ticket.c
+obfs/crc32.c
+obfs/obfsutil.h
+ObfsClass.hpp
+ObfsClass.cpp
+local_uv.cpp
+Buffer.hpp
+encrypt.c
+ConnectionContext.hpp
+sockaddr_universal.h
+uvw_single.hpp
+ConnectionContext.cpp
+common.h
+encrypt.h
+cache.h
+utils.c
+shadowsocks.h
+CipherEnv.hpp
+catch2.hpp
+sockaddr_universal.c
+CipherEnv.cpp
+uthash.h
+Buffer.cpp
+cache.c
+)
+endif()
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library(libshadowsocksr-libuv ${SOURCE_FILES_LOCAL})
-
-target_compile_definitions(libshadowsocksr-libuv
-        PRIVATE MODULE_LOCAL LIB_ONLY
-        )
+add_library(libshadowsocksr-uvw ${SOURCE_FILES_LOCAL})
 
 
 set (ss_lib_net
         ${LIBCRYPTO}
         sodium
         uv
-	Qt5::Core
         )
 
 
-target_link_libraries(libshadowsocksr-libuv
-        ${ss_lib_net}
+if(SSR_UVW_WITH_QT)
+target_link_libraries(libshadowsocksr-uvw Qt5::Core
 )
+endif()
+
+target_link_libraries(libshadowsocksr-uvw
+        ${ss_lib_net} 
+)
+
