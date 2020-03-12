@@ -1,7 +1,9 @@
 # Build args
 
 if (${with_crypto_library} STREQUAL "openssl")
+    if(LINUX)
     find_package(OpenSSL REQUIRED)
+    endif()
     set(USE_CRYPTO_OPENSSL 1)
     set(LIBCRYPTO
             ${OPENSSL_CRYPTO_LIBRARY})

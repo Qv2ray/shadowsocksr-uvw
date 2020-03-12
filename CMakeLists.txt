@@ -17,6 +17,7 @@ if (UNIX AND NOT APPLE)
 endif ()
 if(APPLE)
 add_definitions(-DOPENSSL_ROOT_DIR=/usr/local/opt/openssl)
+add_definitions(-DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib)
 endif()
 
 set(with_crypto_library "openssl" CACHE STRING "build with the given crypto library, TYPE=openssl|polarssl|mbedtls default=openssl")
