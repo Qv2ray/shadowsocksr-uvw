@@ -71,7 +71,7 @@ jobs:
           sudo add-apt-repository ppa:webispy/grpc
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
           sudo apt update
-          sudo apt install -y libssl-dev tree libsodium-dev libuv1-dev ninja-build
+          sudo apt install -y libssl-dev tree libsodium-dev libuv1-dev libuv1 ninja-build
 # --------------------------------------------------------
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
@@ -86,6 +86,25 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
          choco install -y ninja
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Build preparation - Download Dependencies
+        shell: bash
+        if: matrix.platform == 'windows-latest'
+        run: |
+         choco install -y ninja
+         curl -o ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
+         curl -o ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
+      - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
+        if: matrix.platform == 'windows-latest'
+        uses: DuckSoft/extract-7z-action@v1.0
+        with:
+          pathSource: ./libs/Qv2ray-deps-grpc-${{ matrix.arch }}-windows.7z
+          pathTarget: ./libs
+       - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
+        if: matrix.platform == 'windows-latest'
+        uses: DuckSoft/extract-7z-action@v1.0
+        with:
+          pathSource: ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
+          pathTarget: ./libs
 # ========================================================================================================= Generate MakeFile and Build
       - name: macOS - ${{ matrix.qt_version }} - Generate Dependencies and Build
         shell: bash
