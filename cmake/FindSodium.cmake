@@ -165,20 +165,20 @@ elseif (WIN32)
 
     elseif(_GCC_COMPATIBLE)
         if (sodium_USE_STATIC_LIBS)
-            find_library(sodium_LIBRARY_DEBUG libsodium.a
+            find_library(sodium_LIBRARY_DEBUG libsodium.lib
                 HINTS ${sodium_DIR}
-                PATH_SUFFIXES lib
+                PATH_SUFFIXES "debug/lib"
             )
-            find_library(sodium_LIBRARY_RELEASE libsodium.a
+            find_library(sodium_LIBRARY_RELEASE libsodium.lib
                 HINTS ${sodium_DIR}
                 PATH_SUFFIXES lib
             )
         else()
-            find_library(sodium_LIBRARY_DEBUG libsodium.dll.a
+            find_library(sodium_LIBRARY_DEBUG libsodium.lib
                 HINTS ${sodium_DIR}
-                PATH_SUFFIXES lib
+                PATH_SUFFIXES "debug/lib"
             )
-            find_library(sodium_LIBRARY_RELEASE libsodium.dll.a
+            find_library(sodium_LIBRARY_RELEASE libsodium.lib
                 HINTS ${sodium_DIR}
                 PATH_SUFFIXES lib
             )
@@ -190,7 +190,7 @@ elseif (WIN32)
             )
             find_library(sodium_DLL_DEBUG ${_DLL} libsodium
                 HINTS ${sodium_DIR}
-                PATH_SUFFIXES bin
+                PATH_SUFFIXES "debug/bin"
             )
             find_library(sodium_DLL_RELEASE ${_DLL} libsodium
                 HINTS ${sodium_DIR}
