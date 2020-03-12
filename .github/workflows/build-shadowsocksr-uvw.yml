@@ -71,11 +71,12 @@ jobs:
           sudo add-apt-repository ppa:webispy/grpc
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
           sudo apt update
-          sudo apt install -y libssl-dev tree libuv libsodium-dev libuv1-dev ninja-build
+          sudo apt install -y libssl-dev tree libsodium-dev libuv1-dev ninja-build
 # --------------------------------------------------------
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
         run: |
+          brew install openssl@1.1
           brew install libsodium
           brew install libuv
           brew install ninja
