@@ -29,7 +29,7 @@ extern "C" {
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef __MINGW32__
+#ifndef _MSC_VER
 #include <sys/socket.h>
 #endif
 
