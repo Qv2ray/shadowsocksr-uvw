@@ -76,9 +76,9 @@ jobs:
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
         run: |
-          brew install openssl
-          brew install libsodium
-          brew install ninja
+          brew reinstall openssl
+          brew reinstall libsodium
+          brew reinstall ninja
 # --------------------------------------------------------
       - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Build preparation - Download Dependencies
         shell: bash

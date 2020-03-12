@@ -8,7 +8,12 @@
 #define _OBFS_OBFS_H
 
 #include <stdint.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#else
+#include <io.h>
+#include <process.h>
+#endif
 #include "encrypt.h"
 #define OBFS_HMAC_SHA1_LEN 10
 
