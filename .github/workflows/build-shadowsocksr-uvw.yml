@@ -100,7 +100,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib
           cmake --build . --parallel $(sysctl -n hw.logicalcpu)
 # --------------------------------------------------------        
       - name: Windows - ${{ matrix.qt_version }} - Generate Dependencies and Build
