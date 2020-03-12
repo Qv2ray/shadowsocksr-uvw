@@ -164,6 +164,7 @@ elseif (WIN32)
         endif()
 
     elseif(_GCC_COMPATIBLE)
+        set(sodium_USE_STATIC_LIBS 0)
         if (sodium_USE_STATIC_LIBS)
             find_library(sodium_LIBRARY_DEBUG libsodium.lib
                 HINTS ${sodium_DIR}
@@ -174,14 +175,8 @@ elseif (WIN32)
                 PATH_SUFFIXES lib
             )
         else()
-            find_library(sodium_LIBRARY_DEBUG libsodium.lib
-                HINTS ${sodium_DIR}
-                PATH_SUFFIXES "debug/lib"
-            )
-            find_library(sodium_LIBRARY_RELEASE libsodium.lib
-                HINTS ${sodium_DIR}
-                PATH_SUFFIXES lib
-            )
+            set(sodium_LIBRARY_DEBUG "${sodium_DIR}/debug/lib/libsodium.lib")
+            set(sodium_LIBRARY_RELASE "${sodium_DIR}/lib/libsodium.lib")
 
             file(GLOB _DLL
                 LIST_DIRECTORIES false
@@ -229,7 +224,7 @@ find_package_handle_standard_args(
     Sodium # The name must be either uppercase or match the filename case.
     REQUIRED_VARS
         sodium_LIBRARY_RELEASE
-        sodium_LIBRARY_DEBUG
+ #       sodium_LIBRARY_DEBUG
         sodium_INCLUDE_DIR
     VERSION_VAR
         sodium_VERSION
