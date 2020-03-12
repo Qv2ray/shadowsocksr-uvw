@@ -100,7 +100,7 @@ elseif (WIN32)
         PATH_SUFFIXES include
     )
 
-    if (MSVC)
+    if (MSVC AND NOT _GCC_COMPATIBLE)
         # detect target architecture
         file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/arch.cpp" [=[
             #if defined _M_IX86
@@ -163,35 +163,13 @@ elseif (WIN32)
             set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_BCK})
         endif()
 
-    elseif(_GCC_COMPATIBLE)
-        set(sodium_USE_STATIC_LIBS 0)
-        if (sodium_USE_STATIC_LIBS)
-            find_library(sodium_LIBRARY_DEBUG libsodium.lib
-                HINTS ${sodium_DIR}
-                PATH_SUFFIXES "debug/lib"
-            )
-            find_library(sodium_LIBRARY_RELEASE libsodium.lib
-                HINTS ${sodium_DIR}
-                PATH_SUFFIXES lib
-            )
-        else()
+    endif()
+    if(_GCC_COMPATIBLE)
+            set(sodium_USE_STATIC_LIBS FALSE)
             set(sodium_LIBRARY_DEBUG "${sodium_DIR}/debug/lib/libsodium.lib")
-            set(sodium_LIBRARY_RELASE "${sodium_DIR}/lib/libsodium.lib")
-
-            file(GLOB _DLL
-                LIST_DIRECTORIES false
-                RELATIVE "${sodium_DIR}/bin"
-                "${sodium_DIR}/bin/libsodium*.dll"
-            )
-            find_library(sodium_DLL_DEBUG ${_DLL} libsodium
-                HINTS ${sodium_DIR}
-                PATH_SUFFIXES "debug/bin"
-            )
-            find_library(sodium_DLL_RELEASE ${_DLL} libsodium
-                HINTS ${sodium_DIR}
-                PATH_SUFFIXES bin
-            )
-        endif()
+            set(sodium_DLL_DEBUG "${sodium_DIR}/debug/bin/libsodium.dll")
+            set(sodium_LIBRARY_RELEASE "${sodium_DIR}/lib/libsodium.lib")
+            set(sodium_DLL_RELEASE "${sodium_DIR}/bin/libsodium.dll")
     else()
         message(FATAL_ERROR "this platform is not supported by FindSodium.cmake")
     endif()
@@ -224,7 +202,7 @@ find_package_handle_standard_args(
     Sodium # The name must be either uppercase or match the filename case.
     REQUIRED_VARS
         sodium_LIBRARY_RELEASE
- #       sodium_LIBRARY_DEBUG
+        sodium_LIBRARY_DEBUG
         sodium_INCLUDE_DIR
     VERSION_VAR
         sodium_VERSION
