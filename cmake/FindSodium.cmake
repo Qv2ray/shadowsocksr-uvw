@@ -91,6 +91,7 @@ if (UNIX)
 ########################################################################
 # Windows
 elseif (WIN32)
+    message("Win32 sodium env:" $ENV{sodium_DIR})
     set(sodium_DIR "$ENV{sodium_DIR}" CACHE FILEPATH "sodium install directory")
     mark_as_advanced(sodium_DIR)
 
