@@ -1,4 +1,4 @@
-## Shadowsocksr-uvw
+## shadowsocksr-uvw
 
 A minimal dependency shadowsocksr implementation.
 
@@ -16,14 +16,15 @@ make
 
 ## Licence
 
-shadowsocksr-uvw is under [GPLv3](LICENSE) licence.
+shadowsocksr-uvw is under [GPLv3](LICENSE) licence. It's based on [uvw](https://github.com/skypjack/uvw) which is a header-only, event based, tiny and easy to use
+[`libuv`](https://github.com/libuv/libuv) wrapper in modern C++.
 
-## Dependencies
-
+## Link dependencies
 
 | Name                   | License        |
 | ---------------------- | -------------- |
 | [libuv](https://github.com/libuv/libuv)   | MIT |
-| [uvw](https://github.com/skypjack/uvw) | MIT|
 | [libsodium](https://libsodium.org) | ISC |
 | [openssl](https://www.openssl.org/)| Apache|
+
+
