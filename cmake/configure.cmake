@@ -11,7 +11,7 @@ if (${with_crypto_library} STREQUAL "openssl")
 #  include_directories(${ZLIB_INCLUDE_DIR})
     include_directories(${OPENSSL_INCLUDE_DIR})
 
-    list ( APPEND CMAKE_REQUIRED_INCLUDES ${ZLIB_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR})
+    list ( APPEND CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
 
 elseif(${with_crypto_library} STREQUAL "polarssl")
     find_package(polarssl REQUIRED)
