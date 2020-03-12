@@ -119,7 +119,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF -DOPENSSL_ROOT_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows
           cmake --build . --parallel $(nproc)
 # --------------------------------------------------------
       - name: Linux - ${{ matrix.qt_version }} - Generate Dependencies and Build
