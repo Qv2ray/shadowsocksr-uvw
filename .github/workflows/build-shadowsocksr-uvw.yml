@@ -71,15 +71,14 @@ jobs:
           sudo add-apt-repository ppa:webispy/grpc
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
           sudo apt update
-          sudo apt install -y libssl-dev tree libsodium-dev libuv1-dev libuv1 ninja-build
+          sudo apt install -y libssl-dev tree libsodium-dev ninja-build
 # --------------------------------------------------------
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
         run: |
-          brew install openssl@1.1
           brew install libsodium
-          brew install libuv
           brew install ninja
+          brew install mbedtls
 # --------------------------------------------------------
       - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Build preparation - Download Dependencies
         shell: bash
@@ -91,14 +90,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
          choco install -y ninja
-         curl -o ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
          curl -o ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
-      - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
-        if: matrix.platform == 'windows-latest'
-        uses: DuckSoft/extract-7z-action@v1.0
-        with:
-          pathSource: ./libs/Qv2ray-deps-grpc-${{ matrix.arch }}-windows.7z
-          pathTarget: ./libs
       - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
         if: matrix.platform == 'windows-latest'
         uses: DuckSoft/extract-7z-action@v1.0
@@ -112,7 +104,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF
           cmake --build . --parallel $(sysctl -n hw.logicalcpu)
 # --------------------------------------------------------        
       - name: Windows - ${{ matrix.qt_version }} - Generate Dependencies and Build
@@ -124,7 +116,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF
           cmake --build . --parallel $(nproc)
 # --------------------------------------------------------
       - name: Linux - ${{ matrix.qt_version }} - Generate Dependencies and Build
@@ -136,5 +128,5 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release 
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF
           cmake --build . --parallel $(nproc)

@@ -2,6 +2,12 @@
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(WIN32)
+    set(WINSOCK2 ws2_32)
+elseif(NOT APPLE)
+    find_library(LIBRT rt)
+endif()
+
 if(SSR_UVW_WITH_QT)
 message("find Qt5")
 find_package(Qt5 COMPONENTS Core REQUIRED)
@@ -106,20 +112,26 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(libshadowsocksr-uvw ${SOURCE_FILES_LOCAL})
 
+set(
+    COMMON_LINK_LIBS
+    ${LIBRT}
+    uv_a
+    ${WINSOCK2}
+)
 
 set (ss_lib_net
         ${LIBCRYPTO}
         sodium
-        uv
         )
 
 
 if(SSR_UVW_WITH_QT)
 target_link_libraries(libshadowsocksr-uvw Qt5::Core
+${COMMON_LINK_LIBS}
 )
 endif()
 
 target_link_libraries(libshadowsocksr-uvw
-        ${ss_lib_net} 
+        ${ss_lib_net} ${COMMON_LINK_LIBS}
 )
 
