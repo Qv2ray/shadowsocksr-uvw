@@ -748,7 +748,7 @@ int auth_aes128_sha1_pack_auth_data(auth_simple_global_data *global, server_info
                 char *param = server->param;
                 char *delim = strchr(param, ':');
                 if(delim != NULL) {
-                    char uid_str[16] = {};
+                    char uid_str[16] = {0};
                     strncpy(uid_str, param, delim - param);
                     char key_str[128];
                     strcpy(key_str, delim + 1);
@@ -947,7 +947,7 @@ int auth_aes128_sha1_client_udp_pre_encrypt(obfs *self, char **pplaindata, int d
             char *param = self->server.param;
             char *delim = strchr(param, ':');
             if(delim != NULL) {
-                char uid_str[16] = {};
+                char uid_str[16] = {0};
                 strncpy(uid_str, param, delim - param);
                 char key_str[128];
                 strcpy(key_str, delim + 1);
