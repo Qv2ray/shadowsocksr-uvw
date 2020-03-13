@@ -344,7 +344,9 @@ public:
         profile=p;
         isStop=false;
         loop = uvw::Loop::create();
+#ifndef _WIN32
         signal(SIGPIPE,SIG_IGN);
+#endif
         stopTimer=loop->resource<uvw::TimerHandle>();
         LOGI("listening at %s:%d",profile.local_addr,profile.local_port);
         obfsClass.reset(new ObfsClass{profile.protocol,profile.obfs});
