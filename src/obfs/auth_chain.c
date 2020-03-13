@@ -325,7 +325,7 @@ int auth_chain_a_pack_auth_data(auth_chain_global_data *global, server_info *ser
                 char *param = server->param;
                 char *delim = strchr(param, ':');
                 if(delim != NULL) {
-                    char uid_str[16] = {};
+                    char uid_str[16] = {0};
                     strncpy(uid_str, param, delim - param);
                     char key_str[128];
                     strcpy(key_str, delim + 1);
@@ -519,7 +519,7 @@ int auth_chain_a_client_udp_pre_encrypt(obfs *self, char **pplaindata, int datal
             char *param = self->server.param;
             char *delim = strchr(param, ':');
             if(delim != NULL) {
-                char uid_str[16] = {};
+                char uid_str[16] = {0};
                 strncpy(uid_str, param, delim - param);
                 char key_str[128];
                 strcpy(key_str, delim + 1);
