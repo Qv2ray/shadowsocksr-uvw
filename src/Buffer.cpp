@@ -72,7 +72,7 @@ void Buffer::bufRealloc(size_t size)
 {
     buf->array=reinterpret_cast<char*>(realloc(buf->array,size*sizeof(char)));
     buf->capacity=size;
-    buf->len=std::min(buf->capacity,buf->len);
+    buf->len=buf->capacity<buf->len?buf->capacity:buf->len;
 }
 
 std::unique_ptr<char[]> Buffer::duplicateDataToArray()
