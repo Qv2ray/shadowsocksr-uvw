@@ -4,6 +4,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifndef _MSC_VER
+#define VLA(TYPE,SIZE,NAME) TYPE NAME[SIZE]
+#define VLA_FREE(NAME)
+#else 
+#define VLA(TYPE,SIZE,NAME) TYPE* NAME=(TYPE*)malloc(sizeof(TYPE)*SIZE)
+#define VLA_FREE(NAME) free(NAME)
+#endif
 int get_head_size(char *plaindata, int size, int def_size);
 
 void init_shift128plus(void);

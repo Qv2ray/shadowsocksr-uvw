@@ -672,9 +672,10 @@ int auth_aes128_sha1_pack_data(char *data, int datalength, int fulldatalength, c
     memintcopy_lt(key + key_len - 4, local->pack_id);
 
     {
-        uint8_t rnd_data[rand_len];
+        VLA(uint8_t,rand_len,rnd_data);
         rand_bytes(rnd_data, (int)rand_len);
         memcpy(outdata + 4, rnd_data, rand_len);
+        VLA_FREE(rnd_data);
     }
 
     {
@@ -720,9 +721,10 @@ int auth_aes128_sha1_pack_auth_data(auth_simple_global_data *global, server_info
     memcpy(key + server->iv_len, server->key, server->key_len);
 
     {
-        uint8_t rnd_data[rand_len];
+        VLA(uint8_t,rand_len,rnd_data);
         rand_bytes(rnd_data, (int)rand_len);
         memcpy(outdata + data_offset - rand_len, rnd_data, rand_len);
+        VLA_FREE(rnd_data);
     }
 
     ++global->connection_id;
@@ -771,7 +773,7 @@ int auth_aes128_sha1_pack_auth_data(auth_simple_global_data *global, server_info
         }
 
         char encrypt_key_base64[256] = {0};
-        unsigned char encrypt_key[local->user_key_len];
+        VLA(uint8_t,local->user_key_len,encrypt_key);
         memcpy(encrypt_key, local->user_key, local->user_key_len);
         base64_encode(encrypt_key, (unsigned int)local->user_key_len, encrypt_key_base64);
 
@@ -785,6 +787,7 @@ int auth_aes128_sha1_pack_auth_data(auth_simple_global_data *global, server_info
         ss_aes_128_cbc(encrypt, encrypt_data, enc_key);
         memcpy(encrypt + 4, encrypt_data, 16);
         memcpy(encrypt, local->uid, 4);
+        VLA_FREE(encrypt_key);
     }
 
     {
