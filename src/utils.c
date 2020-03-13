@@ -25,7 +25,12 @@
 #endif
 
 #include <stdlib.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#else
+#include <io.h>
+#include <process.h>
+#endif
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
