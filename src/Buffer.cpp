@@ -4,6 +4,7 @@
 #include "uvw_single.hpp"
 #include "encrypt.h"
 #include "utils.h"
+#include <algorithm>
 namespace
 {
 void freeBuf(buffer_t* buf)
@@ -69,7 +70,7 @@ void Buffer::drop(size_t size)
 
 void Buffer::bufRealloc(size_t size)
 {
-    buf->array=reinterpret_cast<char*>(::realloc(buf->array,size*sizeof(char)));
+    buf->array=reinterpret_cast<char*>(realloc(buf->array,size*sizeof(char)));
     buf->capacity=size;
     buf->len=std::min(buf->capacity,buf->len);
 }
