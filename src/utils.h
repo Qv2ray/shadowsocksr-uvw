@@ -65,7 +65,7 @@ extern "C" {
     ((void)__android_log_print(ANDROID_LOG_ERROR, "shadowsocks", \
                                __VA_ARGS__))
 
-#else
+#else //ANDROID
 
 #define STR(x) # x
 #define TOSTR(x) STR(x)
@@ -140,6 +140,30 @@ extern FILE *logfile;
         fflush(stderr); }                                                    \
     while (0)
 
+#elif defined(SSR_UVW_WITH_QT)
+#define LOGI(format, ...)                                                        \
+    do {                                                                         \
+         {                                                   \
+            time_t now = time(NULL);                                             \
+            char timestr[20];                                                    \
+            strftime(timestr, 20, TIME_FORMAT, localtime(&now));                 \
+            qt_ui_log_info( " %s INFO: " format , timestr, ## __VA_ARGS__); \
+             }                                                   \
+    }                                                                            \
+    while (0)
+
+#define LOGE(format, ...)                                        \
+    do {                                                         \
+         {                                   \
+            time_t now = time(NULL);                             \
+            char timestr[20];                                    \
+            strftime(timestr, 20, TIME_FORMAT, localtime(&now)); \
+            qt_ui_log_error( " %s ERROR: " format , timestr, \
+                    ## __VA_ARGS__);                             \
+         }                                   \
+    }                                                            \
+    while (0)
+
 #else
 
 #include <syslog.h>
@@ -199,9 +223,7 @@ extern int use_syslog;
     while (0)
 
 #endif
-/* _WIN32 */
-
-#endif
+#endif //ANDROID
 
 
 
@@ -222,33 +244,6 @@ void *ss_realloc(void *ptr, size_t new_size);
         ptr = NULL;      \
     } while (0)
 
-#ifdef SSR_UVW_WITH_QT
-#undef LOGI
-#undef LOGE
-#define LOGI(format, ...)                                                        \
-    do {                                                                         \
-         {                                                   \
-            time_t now = time(NULL);                                             \
-            char timestr[20];                                                    \
-            strftime(timestr, 20, TIME_FORMAT, localtime(&now));                 \
-            qt_ui_log_info( " %s INFO: " format , timestr, ## __VA_ARGS__); \
-             }                                                   \
-    }                                                                            \
-    while (0)
-
-#define LOGE(format, ...)                                        \
-    do {                                                         \
-         {                                   \
-            time_t now = time(NULL);                             \
-            char timestr[20];                                    \
-            strftime(timestr, 20, TIME_FORMAT, localtime(&now)); \
-            qt_ui_log_error( " %s ERROR: " format , timestr, \
-                    ## __VA_ARGS__);                             \
-         }                                   \
-    }                                                            \
-    while (0)
-
-#endif
 
 
 

@@ -35,13 +35,19 @@
 
 #define INT_DIGITS 19           /* enough for 64 bit integer */
 
+#ifdef LIB_ONLY
+FILE *logfile;
+#endif
+
+#ifdef HAS_SYSLOG
+int use_syslog = 0;
+#endif
 
 
 int use_tty = 1;
 
 char *
-ss_itoa(int i)
-{
+ss_itoa(int i) {
     /* Room for INT_DIGITS digits, - and '\0' */
     static char buf[INT_DIGITS + 2];
     char *p = buf + INT_DIGITS + 1;     /* points to terminating '\0' */
