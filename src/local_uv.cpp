@@ -213,6 +213,7 @@ private:
             return;
         }
         rx += event.length;
+        stat_update_cb();
         auto& buf=*ctx.localBuf;
         char* base=event.data.get();
         char* guard=base+event.length;
