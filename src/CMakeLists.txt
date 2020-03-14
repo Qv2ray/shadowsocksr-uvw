@@ -10,6 +10,7 @@ endif()
 
 if(SSR_UVW_WITH_QT)
 message("find Qt5")
+add_definitions(-DSSR_UVW_WITH_QT)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 endif()
 

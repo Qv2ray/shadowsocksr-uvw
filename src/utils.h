@@ -69,12 +69,11 @@ extern "C" {
 
 #define STR(x) # x
 #define TOSTR(x) STR(x)
-
+#define TIME_FORMAT "%Y-%m-%d %H:%M:%S"
 #ifdef LIB_ONLY
 
 extern FILE *logfile;
 
-#define TIME_FORMAT "%Y-%m-%d %H:%M:%S"
 
 
 
@@ -114,6 +113,30 @@ extern FILE *logfile;
     }                                                            \
     while (0)
 
+#elif defined(SSR_UVW_WITH_QT)
+#define LOGI(format, ...)                                                        \
+    do {                                                                         \
+         {                                                   \
+            time_t now = time(NULL);                                             \
+            char timestr[20];                                                    \
+            strftime(timestr, 20, TIME_FORMAT, localtime(&now));                 \
+            qt_ui_log_info( " %s INFO: " format , timestr, ## __VA_ARGS__); \
+             }                                                   \
+    }                                                                            \
+    while (0)
+
+#define LOGE(format, ...)                                        \
+    do {                                                         \
+         {                                   \
+            time_t now = time(NULL);                             \
+            char timestr[20];                                    \
+            strftime(timestr, 20, TIME_FORMAT, localtime(&now)); \
+            qt_ui_log_error( " %s ERROR: " format , timestr, \
+                    ## __VA_ARGS__);                             \
+         }                                   \
+    }                                                            \
+    while (0)
+
 #elif defined(_WIN32)
 
 #define TIME_FORMAT "%Y-%m-%d %H:%M:%S"
@@ -140,29 +163,6 @@ extern FILE *logfile;
         fflush(stderr); }                                                    \
     while (0)
 
-#elif defined(SSR_UVW_WITH_QT)
-#define LOGI(format, ...)                                                        \
-    do {                                                                         \
-         {                                                   \
-            time_t now = time(NULL);                                             \
-            char timestr[20];                                                    \
-            strftime(timestr, 20, TIME_FORMAT, localtime(&now));                 \
-            qt_ui_log_info( " %s INFO: " format , timestr, ## __VA_ARGS__); \
-             }                                                   \
-    }                                                                            \
-    while (0)
-
-#define LOGE(format, ...)                                        \
-    do {                                                         \
-         {                                   \
-            time_t now = time(NULL);                             \
-            char timestr[20];                                    \
-            strftime(timestr, 20, TIME_FORMAT, localtime(&now)); \
-            qt_ui_log_error( " %s ERROR: " format , timestr, \
-                    ## __VA_ARGS__);                             \
-         }                                   \
-    }                                                            \
-    while (0)
 
 #else
 
