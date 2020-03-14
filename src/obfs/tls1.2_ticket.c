@@ -41,7 +41,7 @@ obfs * tls12_ticket_auth_new_obfs() {
     return self;
 }
 
-int tls12_ticket_auth_get_overhead(obfs *self) {
+int tls12_ticket_auth_get_overhead(obfs *) {
     return 5;
 }
 
@@ -59,20 +59,20 @@ void tls12_ticket_auth_dispose(obfs *self) {
     dispose_obfs(self);
 }
 
-int tls12_ticket_pack_auth_data(tls12_ticket_auth_global_data *global, server_info *server, char *outdata) {
+int tls12_ticket_pack_auth_data(tls12_ticket_auth_global_data *global, server_info_t *server, char *outdata) {
     int out_size = 32;
     time_t t = time(NULL);
-    outdata[0] = (char)(t >> 24);
-    outdata[1] = (char)(t >> 16);
-    outdata[2] = (char)(t >> 8);
-    outdata[3] = (char)t;
-    rand_bytes((uint8_t*)outdata + 4, 18);
+    outdata[0] = (char) (t >> 24);
+    outdata[1] = (char) (t >> 16);
+    outdata[2] = (char) (t >> 8);
+    outdata[3] = (char) t;
+    rand_bytes((uint8_t *) outdata + 4, 18);
 
-    uint8_t *key = (uint8_t*)malloc(server->key_len + 32);
+    uint8_t *key = (uint8_t *) malloc(server->key_len + 32);
     char hash[SHA1_BYTES];
     memcpy(key, server->key, server->key_len);
     memcpy(key + server->key_len, global->local_client_id, 32);
-    ss_sha1_hmac_with_key(hash, outdata, out_size - OBFS_HMAC_SHA1_LEN, key, (int)(server->key_len + 32));
+    ss_sha1_hmac_with_key(hash, outdata, out_size - OBFS_HMAC_SHA1_LEN, key, (int) (server->key_len + 32));
     free(key);
     memcpy(outdata + out_size - OBFS_HMAC_SHA1_LEN, hash, OBFS_HMAC_SHA1_LEN);
     return out_size;
@@ -188,7 +188,7 @@ int tls12_ticket_auth_client_encode(obfs *self, char **pencryptdata, int datalen
         int pos;
 
         char sni[256] = {0};
-        char* param = NULL;
+        const char *param = NULL;
         if (self->server.param && strlen(self->server.param) > 0)
             param = self->server.param;
         else

@@ -2,12 +2,6 @@
 #define _UVW_SINGLE_HTPP
 /*-- #include "uvw.hpp" start --*/
 /*-- #include "uvw/async.hpp" start --*/
-#ifdef max
-#undef max
-#endif
-#ifdef min
-#undef min
-#endif
 
 #include <utility>
 #include <memory>

@@ -18,94 +18,88 @@ set(USE_CRYPTO_OPENSSL 1)
 if(SSR_UVW_WITH_QT)
 set(CMAKE_AUTOMOC ON)
 set(SOURCE_FILES_LOCAL
-utils.h
-obfs/crc32.h
-obfs/auth.c
-obfs/auth.h
-obfs/obfs.c
-obfs/obfs.h
-obfs/base64.h
-obfs/auth_chain.h
-obfs/auth_chain.c
-obfs/verify.c
-obfs/http_simple.h
-obfs/obfsutil.c
-obfs/base64.c
-obfs/tls1.2_ticket.h
-obfs/verify.h
-obfs/http_simple.c
-obfs/tls1.2_ticket.c
-obfs/crc32.c
-obfs/obfsutil.h
-ObfsClass.hpp
-ObfsClass.cpp
-local_uv.cpp
-Buffer.hpp
-qt_ui_log.h
-encrypt.c
-ConnectionContext.hpp
-sockaddr_universal.h
-uvw_single.hpp
-qt_ui_log.cpp
-ConnectionContext.cpp
-common.h
-encrypt.h
-cache.h
-SSRThread.cpp
-utils.c
-shadowsocks.h
-CipherEnv.hpp
-SSRThread.hpp
-catch2.hpp
-sockaddr_universal.c
-CipherEnv.cpp
-uthash.h
-Buffer.cpp
-cache.c
-)
+        utils.h
+        obfs/crc32.h
+        obfs/auth.c
+        obfs/auth.h
+        obfs/obfs.c
+        obfs/obfs.h
+        obfs/base64.h
+        obfs/auth_chain.h
+        obfs/auth_chain.c
+        obfs/http_simple.h
+        obfs/obfsutil.c
+        obfs/base64.c
+        obfs/tls1.2_ticket.h
+        obfs/http_simple.c
+        obfs/tls1.2_ticket.c
+        obfs/crc32.c
+        obfs/obfsutil.h
+        ObfsClass.hpp
+        ObfsClass.cpp
+        local_uv.cpp
+        Buffer.hpp
+        qt_ui_log.h
+        encrypt.c
+        ConnectionContext.hpp
+        sockaddr_universal.h
+        uvw_single.hpp
+        qt_ui_log.cpp
+        ConnectionContext.cpp
+        encrypt.h
+        cache.h
+        SSRThread.cpp
+        utils.c
+        shadowsocks.h
+        CipherEnv.hpp
+        SSRThread.hpp
+        catch2.hpp
+        sockaddr_universal.c
+        CipherEnv.cpp
+        uthash.h
+        Buffer.cpp
+        cache.c
+        )
 else()
 set(SOURCE_FILES_LOCAL
-utils.h
-obfs/crc32.h
-obfs/auth.c
-obfs/auth.h
-obfs/obfs.c
-obfs/obfs.h
-obfs/base64.h
-obfs/auth_chain.h
-obfs/auth_chain.c
-obfs/verify.c
-obfs/http_simple.h
-obfs/obfsutil.c
-obfs/base64.c
-obfs/tls1.2_ticket.h
-obfs/verify.h
-obfs/http_simple.c
-obfs/tls1.2_ticket.c
-obfs/crc32.c
-obfs/obfsutil.h
-ObfsClass.hpp
-ObfsClass.cpp
-local_uv.cpp
-Buffer.hpp
-encrypt.c
-ConnectionContext.hpp
-sockaddr_universal.h
-uvw_single.hpp
-ConnectionContext.cpp
-common.h
-encrypt.h
-cache.h
-utils.c
-shadowsocks.h
-CipherEnv.hpp
-catch2.hpp
-sockaddr_universal.c
-CipherEnv.cpp
-uthash.h
-Buffer.cpp
-cache.c
-)
+        utils.h
+        obfs/crc32.h
+        obfs/auth.c
+        obfs/auth.h
+        obfs/obfs.c
+        obfs/obfs.h
+        obfs/base64.h
+        obfs/auth_chain.h
+        obfs/auth_chain.c
+        obfs/http_simple.h
+        obfs/obfsutil.c
+        obfs/base64.c
+        obfs/tls1.2_ticket.h
+        obfs/http_simple.c
+        obfs/tls1.2_ticket.c
+        obfs/crc32.c
+        obfs/obfsutil.h
+        ObfsClass.hpp
+        ObfsClass.cpp
+        local_uv.cpp
+        Buffer.hpp
+        encrypt.c
+        ConnectionContext.hpp
+        sockaddr_universal.h
+        uvw_single.hpp
+        ConnectionContext.cpp
+        encrypt.h
+        cache.h
+        utils.c
+        shadowsocks.h
+        CipherEnv.hpp
+        catch2.hpp
+        sockaddr_universal.c
+        CipherEnv.cpp
+        uthash.h
+        Buffer.cpp
+        cache.c
+        )
 endif()
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

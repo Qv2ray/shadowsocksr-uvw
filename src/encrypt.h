@@ -29,9 +29,6 @@ extern "C" {
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef _MSC_VER
-#include <sys/socket.h>
-#endif
 
 #include <string.h>
 #include <stdlib.h>

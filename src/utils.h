@@ -209,12 +209,9 @@ extern int use_syslog;
 char *ss_itoa(int i);
 int ss_isnumeric(const char *s);
 void FATAL(const char *msg);
-void usage(void);
+
 char *ss_strndup(const char *s, size_t n);
 char *ss_strdup(const char *s);
-#ifdef HAVE_SETRLIMIT
-int set_nofile(int nofile);
-#endif
 
 void *ss_malloc(size_t size);
 void *ss_realloc(void *ptr, size_t new_size);

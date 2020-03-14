@@ -68,17 +68,17 @@ void ConnectionContext::setRemoteTcpHandle(std::shared_ptr<uvw::TCPHandle> tcp)
     remote=std::move(tcp);
 }
 
-server_info ConnectionContext::construct_obfs(CipherEnv &cipherEnv, ObfsClass &obfsClass, const profile_t &profile, int server_info_head_len)
-{
-    server_info _server_info;
-    memset(&_server_info, 0, sizeof(server_info));
+server_info_t ConnectionContext::construct_obfs(CipherEnv &cipherEnv, ObfsClass &obfsClass, const profile_t &profile,
+                                                int server_info_head_len) {
+    server_info_t _server_info;
+    memset(&_server_info, 0, sizeof(server_info_t));
     if (cipherEnv.cipher.enc_method > TABLE) {
-        auto encCtxRelease=[this](struct enc_ctx* p){
-            if(p==nullptr) return;
-            enc_ctx_release(&this->cipherEnvPtr->cipher,p);
+        auto encCtxRelease = [this](struct enc_ctx *p) {
+            if (p == nullptr) return;
+            enc_ctx_release(&this->cipherEnvPtr->cipher, p);
         };
-        e_ctx={reinterpret_cast<struct enc_ctx*>(malloc(sizeof(struct enc_ctx))),encCtxRelease};
-        d_ctx={reinterpret_cast<struct enc_ctx*>(malloc(sizeof(struct enc_ctx))),encCtxRelease};
+        e_ctx = {reinterpret_cast<struct enc_ctx *>(malloc(sizeof(struct enc_ctx))), encCtxRelease};
+        d_ctx = {reinterpret_cast<struct enc_ctx *>(malloc(sizeof(struct enc_ctx))), encCtxRelease};
         enc_ctx_init(&cipherEnv.cipher, e_ctx.get(), 1);
         enc_ctx_init(&cipherEnv.cipher, d_ctx.get(), 0);
     }

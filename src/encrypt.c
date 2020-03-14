@@ -29,7 +29,6 @@
 #if defined(USE_CRYPTO_OPENSSL)
 
 #include <openssl/md5.h>
-#include <openssl/rand.h>
 #include <openssl/hmac.h>
 #include <openssl/aes.h>
 

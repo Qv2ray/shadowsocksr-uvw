@@ -224,9 +224,9 @@ void auth_chain_a_dispose(obfs *self) {
     dispose_obfs(self);
 }
 
-void auth_chain_set_server_info(obfs *self, server_info *server) {
+void auth_chain_set_server_info(obfs *self, server_info_t *server) {
     server->overhead = 4;
-    memmove(&self->server, server, sizeof(server_info));
+    memmove(&self->server, server, sizeof(server_info_t));
 }
 
 unsigned int udp_get_rand_len(shift128plus_ctx* random, uint8_t* last_hash) {
@@ -248,20 +248,21 @@ unsigned int get_server_rand_len(auth_chain_local_data *local, int datalength, i
     return local->rnd(datalength, &local->random_server, local->last_server_hash, local->data_size_list, local->data_size_list_len, local->data_size_list2, local->data_size_list2_len, overhead);
 }
 
-int auth_chain_a_pack_data(char *data, int datalength, char *outdata, auth_chain_local_data *local, server_info *server) {
+int
+auth_chain_a_pack_data(char *data, int datalength, char *outdata, auth_chain_local_data *local, server_info_t *server) {
     unsigned int rand_len = get_client_rand_len(local, datalength, server->overhead);
-    int out_size = (int)rand_len + datalength + 2;
-    outdata[0] = (char)((uint8_t)datalength ^ local->last_client_hash[14]);
-    outdata[1] = (char)((uint8_t)(datalength >> 8) ^ local->last_client_hash[15]);
+    int out_size = (int) rand_len + datalength + 2;
+    outdata[0] = (char) ((uint8_t) datalength ^ local->last_client_hash[14]);
+    outdata[1] = (char) ((uint8_t) (datalength >> 8) ^ local->last_client_hash[15]);
 
     {
-        VLA(uint8_t,rand_len,rnd_data);
-        rand_bytes(rnd_data, (int)rand_len);
+        VLA(uint8_t, rand_len, rnd_data);
+        rand_bytes(rnd_data, (int) rand_len);
         if (datalength > 0) {
             int start_pos = get_rand_start_pos(rand_len, &local->random_client);
             size_t out_len;
             ss_encrypt_buffer(&local->cipher, local->cipher_client_ctx,
-                    data, datalength, &outdata[2 + start_pos], &out_len);
+                              data, datalength, &outdata[2 + start_pos], &out_len);
             memcpy(outdata + 2, rnd_data, start_pos);
             memcpy(outdata + 2 + start_pos + datalength, rnd_data + start_pos, rand_len - start_pos);
         } else {
@@ -282,15 +283,16 @@ int auth_chain_a_pack_data(char *data, int datalength, char *outdata, auth_chain
     return out_size + 2;
 }
 
-int auth_chain_a_pack_auth_data(auth_chain_global_data *global, server_info *server, auth_chain_local_data *local, char *data, int datalength, char *outdata) {
+int auth_chain_a_pack_auth_data(auth_chain_global_data *global, server_info_t *server, auth_chain_local_data *local,
+                                char *data, int datalength, char *outdata) {
     const int authhead_len = 4 + 8 + 4 + 16 + 4;
-    const char* salt = local->salt;
+    const char *salt = local->salt;
     int out_size = authhead_len;
 
     ++global->connection_id;
     if (global->connection_id > 0xFF000000) {
         rand_bytes(global->local_client_id, 8);
-        rand_bytes((uint8_t*)&global->connection_id, 4);
+        rand_bytes((uint8_t *) &global->connection_id, 4);
         global->connection_id &= 0xFFFFFF;
     }
 
@@ -322,7 +324,7 @@ int auth_chain_a_pack_auth_data(auth_chain_global_data *global, server_info *ser
         uint8_t uid[4];
         if (local->user_key == NULL) {
             if(server->param != NULL && server->param[0] != 0) {
-                char *param = server->param;
+                const char *param = server->param;
                 char *delim = strchr(param, ':');
                 if(delim != NULL) {
                     char uid_str[16] = {0};
@@ -392,18 +394,19 @@ int auth_chain_a_pack_auth_data(auth_chain_global_data *global, server_info *ser
 
 int auth_chain_a_client_pre_encrypt(obfs *self, char **pplaindata, int datalength, size_t* capacity) {
     char *plaindata = *pplaindata;
-    server_info *server = (server_info*)&self->server;
-    auth_chain_local_data *local = (auth_chain_local_data*)self->l_data;
-    char * out_buffer = (char*)malloc((size_t)(datalength * 2 + 4096));
-    char * buffer = out_buffer;
-    char * data = plaindata;
+    server_info_t *server = (server_info_t *) &self->server;
+    auth_chain_local_data *local = (auth_chain_local_data *) self->l_data;
+    char *out_buffer = (char *) malloc((size_t) (datalength * 2 + 4096));
+    char *buffer = out_buffer;
+    char *data = plaindata;
     int len = datalength;
     int pack_len;
     if (len > 0 && local->has_sent_header == 0) {
         int head_size = 1200;
         if (head_size > datalength)
             head_size = datalength;
-        pack_len = auth_chain_a_pack_auth_data((auth_chain_global_data *)self->server.g_data, &self->server, local, data, head_size, buffer);
+        pack_len = auth_chain_a_pack_auth_data((auth_chain_global_data *) self->server.g_data, &self->server, local,
+                                               data, head_size, buffer);
         buffer += pack_len;
         data += head_size;
         len -= head_size;
@@ -433,25 +436,26 @@ int auth_chain_a_client_pre_encrypt(obfs *self, char **pplaindata, int datalengt
 
 int auth_chain_a_client_post_decrypt(obfs *self, char **pplaindata, int datalength, size_t* capacity) {
     char *plaindata = *pplaindata;
-    auth_chain_local_data *local = (auth_chain_local_data*)self->l_data;
-    server_info *server = (server_info*)&self->server;
-    uint8_t * recv_buffer = (uint8_t *)local->recv_buffer;
+    auth_chain_local_data *local = (auth_chain_local_data *) self->l_data;
+    server_info_t *server = (server_info_t *) &self->server;
+    uint8_t *recv_buffer = (uint8_t *) local->recv_buffer;
     if (local->recv_buffer_size + datalength > 16384)
         return -1;
     memmove(recv_buffer + local->recv_buffer_size, plaindata, datalength);
     local->recv_buffer_size += datalength;
 
     int key_len = local->user_key_len + 4;
-    uint8_t *key = (uint8_t*)malloc((size_t)key_len);
+    uint8_t *key = (uint8_t *) malloc((size_t) key_len);
     memcpy(key, local->user_key, local->user_key_len);
 
-    char * out_buffer = (char*)malloc((size_t)local->recv_buffer_size);
-    char * buffer = out_buffer;
+    char *out_buffer = (char *) malloc((size_t) local->recv_buffer_size);
+    char *buffer = out_buffer;
     char error = 0;
     while (local->recv_buffer_size > 4) {
         memintcopy_lt(key + key_len - 4, local->recv_id);
 
-        int data_len = (int)(((unsigned)(recv_buffer[1] ^ local->last_server_hash[15]) << 8) + (recv_buffer[0] ^ local->last_server_hash[14]));
+        int data_len = (int) (((unsigned) (recv_buffer[1] ^ local->last_server_hash[15]) << 8) +
+                              (recv_buffer[0] ^ local->last_server_hash[14]));
         int rand_len = get_server_rand_len(local, data_len, server->overhead);
         int len = rand_len + data_len;
         if (len >= 4096) {
@@ -510,24 +514,24 @@ int auth_chain_a_client_post_decrypt(obfs *self, char **pplaindata, int dataleng
 
 int auth_chain_a_client_udp_pre_encrypt(obfs *self, char **pplaindata, int datalength, size_t* capacity) {
     char *plaindata = *pplaindata;
-    server_info *server = (server_info*)&self->server;
-    auth_chain_local_data *local = (auth_chain_local_data*)self->l_data;
-    VLA(char,datalength+1024,out_buffer);
+    server_info_t *server = (server_info_t *) &self->server;
+    auth_chain_local_data *local = (auth_chain_local_data *) self->l_data;
+    VLA(char, datalength + 1024, out_buffer);
 
     if (local->user_key == NULL) {
-        if(self->server.param != NULL && self->server.param[0] != 0) {
-            char *param = self->server.param;
+        if (self->server.param != NULL && self->server.param[0] != 0) {
+            const char *param = self->server.param;
             char *delim = strchr(param, ':');
-            if(delim != NULL) {
+            if (delim != NULL) {
                 char uid_str[16] = {0};
                 strncpy(uid_str, param, delim - param);
                 char key_str[128];
                 strcpy(key_str, delim + 1);
                 long uid_long = strtol(uid_str, NULL, 10);
-                memintcopy_lt(local->uid, (uint32_t)uid_long);
+                memintcopy_lt(local->uid, (uint32_t) uid_long);
 
-                local->user_key_len = (int)strlen(key_str);
-                local->user_key = (uint8_t*)malloc((size_t)local->user_key_len);
+                local->user_key_len = (int) strlen(key_str);
+                local->user_key = (uint8_t *) malloc((size_t) local->user_key_len);
                 memcpy(local->user_key, key_str, local->user_key_len);
             }
         }
@@ -588,16 +592,16 @@ int auth_chain_a_client_udp_post_decrypt(obfs *self, char **pplaindata, int data
         return 0;
 
     char *plaindata = *pplaindata;
-    server_info *server = (server_info*)&self->server;
-    auth_chain_local_data *local = (auth_chain_local_data*)self->l_data;
+    server_info_t *server = (server_info_t *) &self->server;
+    auth_chain_local_data *local = (auth_chain_local_data *) self->l_data;
 
     uint8_t hash[16];
-    ss_md5_hmac_with_key((char*)hash, plaindata, datalength - 1, local->user_key, local->user_key_len);
+    ss_md5_hmac_with_key((char *) hash, plaindata, datalength - 1, local->user_key, local->user_key_len);
 
-    if (*hash != ((uint8_t*)plaindata)[datalength - 1])
+    if (*hash != ((uint8_t *) plaindata)[datalength - 1])
         return 0;
 
-    ss_md5_hmac_with_key((char*)hash, plaindata + datalength - 8, 7, server->key, server->key_len);
+    ss_md5_hmac_with_key((char *) hash, plaindata + datalength - 8, 7, server->key, server->key_len);
 
     int rand_len = udp_get_rand_len(&local->random_server, hash);
     int outlength = datalength - rand_len - 8;
@@ -621,17 +625,17 @@ int auth_chain_a_client_udp_post_decrypt(obfs *self, char **pplaindata, int data
 }
 
 //auth_chain_b
-void auth_chain_b_set_server_info(obfs *self, server_info *server) {
-    memmove(&self->server, server, sizeof(server_info));
+void auth_chain_b_set_server_info(obfs *self, server_info_t *server) {
+    memmove(&self->server, server, sizeof(server_info_t));
 
-    auth_chain_local_data *local = (auth_chain_local_data*)self->l_data;
-    shift128plus_ctx* random = &(local->random_server);
+    auth_chain_local_data *local = (auth_chain_local_data *) self->l_data;
+    shift128plus_ctx *random = &(local->random_server);
     shift128plus_init_from_bin(random, server->key, 16);
     local->data_size_list_len = shift128plus_next(random) % 8 + 4;
-    local->data_size_list = (int*)malloc(local->data_size_list_len * sizeof(int));
+    local->data_size_list = (int *) malloc(local->data_size_list_len * sizeof(int));
 
     int i;
-    for(i = 0; i < local->data_size_list_len; i++) {
+    for (i = 0; i < local->data_size_list_len; i++) {
         local->data_size_list[i] = shift128plus_next(random) % 2340 % 2040 % 1440;
     }
 

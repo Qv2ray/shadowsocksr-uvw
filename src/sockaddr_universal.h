@@ -5,7 +5,6 @@
 extern "C" {
 #endif
 #if defined(_WIN32)
-//#include <winsock2.h>
 #include <WS2tcpip.h>
 #else
 #include <netinet/in.h>
@@ -13,13 +12,6 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
-
-union sockaddr_universal {
-    struct sockaddr_storage addr_stor;
-    struct sockaddr_in6 addr6;
-    struct sockaddr_in addr4;
-    struct sockaddr addr;
-};
 
 enum SOCKS5_ADDRTYPE {
     SOCKS5_ADDRTYPE_INVALID = 0x00,
