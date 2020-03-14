@@ -23,7 +23,7 @@ obfs * new_obfs() {
     return self;
 }
 
-int get_overhead(obfs *) {
+int get_overhead(obfs *self) {
     return 0;
 }
 

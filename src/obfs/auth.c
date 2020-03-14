@@ -993,7 +993,7 @@ int auth_aes128_sha1_client_udp_pre_encrypt(obfs *self, char **pplaindata, int d
     return outlength;
 }
 
-int auth_aes128_sha1_client_udp_post_decrypt(obfs *self, char **pplaindata, int datalength, size_t *) {
+int auth_aes128_sha1_client_udp_post_decrypt(obfs *self, char **pplaindata, int datalength, size_t *capacity) {
     if (datalength <= 4)
         return 0;
 
