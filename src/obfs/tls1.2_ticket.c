@@ -41,7 +41,7 @@ obfs * tls12_ticket_auth_new_obfs() {
     return self;
 }
 
-int tls12_ticket_auth_get_overhead(obfs *) {
+int tls12_ticket_auth_get_overhead(obfs *self) {
     return 5;
 }
 
