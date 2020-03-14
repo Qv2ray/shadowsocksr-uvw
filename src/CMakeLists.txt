@@ -16,7 +16,7 @@ endif()
 set(USE_CRYPTO_OPENSSL 1)
 
 if(SSR_UVW_WITH_QT)
-set(CMAKE_AUTOMOC ON)
+qt5_wrap_cpp(ssr_thread_moc SSRThread.hpp)
 set(SOURCE_FILES_LOCAL
         utils.h
         obfs/crc32.h
@@ -59,6 +59,7 @@ set(SOURCE_FILES_LOCAL
         uthash.h
         Buffer.cpp
         cache.c
+        ${ssr_thread_moc}
         )
 else()
 set(SOURCE_FILES_LOCAL
@@ -100,20 +101,21 @@ set(SOURCE_FILES_LOCAL
         Buffer.cpp
         cache.c
         )
-endif()
+endif ()
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(${PROJECT_NAME} ${SOURCE_FILES_LOCAL})
+add_library(shadowsocksr::uvw ALIAS ${PROJECT_NAME})
 
 set(
-    COMMON_LINK_LIBS
-    ${LIBRT}
-    uv_a
-    ${WINSOCK2}
+        COMMON_LINK_LIBS
+        ${LIBRT}
+        uv_a
+        ${WINSOCK2}
 )
 
-set (ss_lib_net
+set(ss_lib_net
         ${LIBCRYPTO}
         sodium
         )
@@ -128,4 +130,3 @@ endif()
 target_link_libraries(${PROJECT_NAME}
         ${ss_lib_net} ${COMMON_LINK_LIBS}
         )
-
