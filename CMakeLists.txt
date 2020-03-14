@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.14)
-set(PROJECT_NAME shadowsocks-libev)
+set(PROJECT_NAME shadowsocksr-uvw)
 project(${PROJECT_NAME})
 
 set(VERSION 0.0.1)

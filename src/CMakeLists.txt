@@ -104,7 +104,7 @@ endif()
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library(libshadowsocksr-uvw ${SOURCE_FILES_LOCAL})
+add_library(${PROJECT_NAME} ${SOURCE_FILES_LOCAL})
 
 set(
     COMMON_LINK_LIBS
@@ -120,12 +120,12 @@ set (ss_lib_net
 
 
 if(SSR_UVW_WITH_QT)
-target_link_libraries(libshadowsocksr-uvw Qt5::Core
-${COMMON_LINK_LIBS}
-)
+    target_link_libraries(${PROJECT_NAME} Qt5::Core
+            ${COMMON_LINK_LIBS}
+            )
 endif()
 
-target_link_libraries(libshadowsocksr-uvw
+target_link_libraries(${PROJECT_NAME}
         ${ss_lib_net} ${COMMON_LINK_LIBS}
-)
+        )
 
