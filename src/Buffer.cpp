@@ -128,7 +128,7 @@ size_t Buffer::length()
 
 void Buffer::protocolPluginPreEncrypt(ObfsClass &obfsClass, ConnectionContext &connectionContext)
 {
-    if(obfsClass.protocol_plugin){
+    if(obfsClass.protocol_plugin && obfsClass.protocol_plugin->client_pre_encrypt){
        setLength(obfsClass.protocol_plugin->client_pre_encrypt(
                         connectionContext.protocolPtr.get(),
                         getBufPtr(),
@@ -140,7 +140,7 @@ void Buffer::protocolPluginPreEncrypt(ObfsClass &obfsClass, ConnectionContext &c
 
 void Buffer::protocolPluginPostDecrypt(ObfsClass &obfsClass, ConnectionContext &connectionContext)
 {
-    if(obfsClass.protocol_plugin){
+    if(obfsClass.protocol_plugin && obfsClass.protocol_plugin->client_post_decrypt){
        setLength(obfsClass.protocol_plugin->client_post_decrypt(
                         connectionContext.protocolPtr.get(),
                         getBufPtr(),
