@@ -23,6 +23,7 @@ private:
     std::shared_ptr<uvw::TimerHandle> stopTimer;
     std::shared_ptr<uvw::TCPHandle> tcpServer;
     bool isStop = false;
+    bool verbose = false;
     profile_t profile{};
     bool acl = false;
     socks5_address address{};
@@ -109,13 +110,13 @@ private:
             switch (buf.length()) {
                 case 0:
                     cmd = event.data[1];
-                break;
-            case 1:
-                cmd=event.data[0];
-                break;
-            default:
-                cmd=buf[1];
-                break;
+                    break;
+                case 1:
+                    cmd=event.data[0];
+                    break;
+                default:
+                    cmd=buf[1];
+                    break;
             }
             buf.copy(event);//buf never equal to zero
             switch (cmd) {
@@ -147,7 +148,8 @@ private:
     }
 
     void panic(const std::shared_ptr<uvw::TCPHandle> &clientConnection) {
-        LOGE("panic close client connection");
+        if(verbose)
+            LOGE("panic close client connection");
         if (inComingConnections.find(clientConnection) != inComingConnections.end()) {
             auto ctxPtr = inComingConnections[clientConnection];
             inComingConnections.erase(clientConnection);
@@ -191,19 +193,13 @@ private:
         }
         if(buf.length()!=0)
         {
-            connectionContext.remote->once<uvw::WriteEvent>([clientPtr,this](const auto&,uvw::TCPHandle&h){
+            connectionContext.remote->once<uvw::WriteEvent>([clientPtr,this](const auto&,uvw::TCPHandle&remote){
                 auto& connectionContext=*inComingConnections[clientPtr];
                 Buffer& buf=*connectionContext.remoteBuf;
                 buf.clear();
-                h.read();
             });
             connectionContext.remote->write(buf.begin(),buf.length());
-            buf.clear();
             return;
-        }
-        else
-        {
-            clientPtr->stop();
         }
     }
     void remoteRecv(ConnectionContext& ctx,uvw::DataEvent& event,uvw::TCPHandle& remote)
@@ -227,7 +223,7 @@ private:
             if(needsendback)
             {
                 ctx.remoteBuf->clientEncode(*obfsClass,ctx,0);
-                remote.once<uvw::WriteEvent>([&ctx](auto&,auto&){ctx.remoteBuf->clear();ctx.client->read();});
+                remote.once<uvw::WriteEvent>([&ctx](auto&,auto&){ctx.remoteBuf->clear();});
                 remote.write(ctx.remoteBuf->begin(),ctx.remoteBuf->length());
             }
             if(buf.length()>0)
@@ -300,11 +296,13 @@ private:
             LOGE("remote error %s",e.what());
             panic(clientPtr); });
         remoteTcp->once<uvw::CloseEvent>([clientPtr,this](const uvw::CloseEvent &, uvw::TCPHandle &) {
-            LOGI("remote close");
+            if(verbose)
+                LOGI("remote close");
             panic(clientPtr);
         });
         remoteTcp->once<uvw::EndEvent>([clientPtr, this](const uvw::EndEvent &, uvw::TCPHandle &) {
-            LOGI("remote end event");
+            if(verbose)
+                LOGI("remote end event");
             panic(clientPtr);
         });
         remoteTcp->noDelay(true);
@@ -323,7 +321,8 @@ private:
                                                                                            cipherEnv.get())));
             client->once<uvw::CloseEvent>([this](const uvw::CloseEvent &, uvw::TCPHandle &c) {
                 auto clientPtr = c.shared_from_this();
-                LOGI("client close");
+                if(verbose)
+                    LOGI("client close");
                 panic(clientPtr);
             });
             client->once<uvw::ErrorEvent>([this](const uvw::ErrorEvent &e, uvw::TCPHandle &c) {
