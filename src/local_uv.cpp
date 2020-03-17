@@ -30,6 +30,7 @@ private:
     std::unique_ptr<ObfsClass> obfsClass;
     std::unique_ptr<CipherEnv> cipherEnv;
     uint64_t tx = 0, rx = 0;
+    uint64_t last_tx = 0, last_rx = 0;
     sockaddr remoteAddr{};
     std::unordered_map<std::shared_ptr<uvw::TCPHandle>, std::shared_ptr<ConnectionContext>> inComingConnections;
     double last{};
@@ -38,9 +39,13 @@ private:
         uv_timeval64_t tv;
         uv_gettimeofday(&tv);
         double now = tv.tv_sec + tv.tv_usec * 1e-6;
-        if (now - last > 0.5) {
+        if (now - last > 1) {
 #ifdef SSR_UVW_WITH_QT
-            send_traffic_stat(tx, rx);
+            auto diff_tx=tx-last_tx;
+            auto diff_rx=rx-last_rx;
+            send_traffic_stat(diff_tx, diff_rx);
+            last_tx=tx;
+            last_rx=rx;
 #endif
             last = now;
         }
@@ -345,6 +350,7 @@ public:
     int loopMain(profile_t &p) {
         profile = p;
         isStop = false;
+        tx=rx=last_rx=last_tx=0;
         loop = uvw::Loop::create();
 #ifndef _WIN32
         signal(SIGPIPE, SIG_IGN);
