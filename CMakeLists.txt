@@ -6,7 +6,7 @@
 # Please see the COPYING file in this distribution for license details.
 # ----------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.2)
 set(PROJECT_NAME shadowsocksr-uvw)
 project(${PROJECT_NAME})
 
