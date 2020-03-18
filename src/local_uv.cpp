@@ -198,12 +198,8 @@ private:
         }
         if(buf.length()!=0)
         {
-            connectionContext.remote->once<uvw::WriteEvent>([clientPtr,this](const auto&,uvw::TCPHandle&remote){
-                auto& connectionContext=*inComingConnections[clientPtr];
-                Buffer& buf=*connectionContext.remoteBuf;
-                buf.clear();
-            });
-            connectionContext.remote->write(buf.begin(),buf.length());
+            connectionContext.remote->write(buf.duplicateDataToArray(),buf.length());
+            buf.clear();
             return;
         }
     }
