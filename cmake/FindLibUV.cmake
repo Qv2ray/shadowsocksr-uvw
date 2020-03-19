@@ -60,11 +60,13 @@ They may be set by end users to point at libuv components.
 #-----------------------------------------------------------------------------
 find_library(LibUV_LIBRARY
   NAMES uv
+  HINTS $ENV{libs_dir}
   )
 mark_as_advanced(LibUV_LIBRARY)
 
 find_path(LibUV_INCLUDE_DIR
   NAMES uv.h
+  HINTS $ENV{libs_dir}
   )
 mark_as_advanced(LibUV_INCLUDE_DIR)
 

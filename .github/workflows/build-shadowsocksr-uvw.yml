@@ -72,7 +72,7 @@ jobs:
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
           sudo add-apt-repository ppa:savoury1/backports
           sudo apt update
-          sudo apt install -y libssl-dev tree libsodium-dev ninja-build libuv1
+          sudo apt install -y libssl-dev tree libsodium-dev ninja-build libuv1 libuv1-dev
 # --------------------------------------------------------
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
@@ -126,10 +126,12 @@ jobs:
           CC: cl.exe
           CXX: cl.exe
         run: |
+          export libs_dir=`pwd`/libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows
+          export sodium_DIR=${libs_dir}
           mkdir build
           cd build
           export sodium_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows -D_GCC_COMPATIBLE=1
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=${libs_dir}  -D_GCC_COMPATIBLE=1
           cmake --build . --parallel $(nproc)
 # --------------------------------------------------------
       - name: Linux - ${{ matrix.qt_version }} - Generate Dependencies and Build
