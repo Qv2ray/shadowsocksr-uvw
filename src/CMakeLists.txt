@@ -119,7 +119,7 @@ set(
 
 set(ss_lib_net
         ${LIBCRYPTO}
-        sodium
+        ${sodium_LIBRARIES}
         )
 
 

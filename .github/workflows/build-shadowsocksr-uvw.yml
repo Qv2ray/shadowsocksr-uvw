@@ -126,12 +126,9 @@ jobs:
           CC: cl.exe
           CXX: cl.exe
         run: |
-          export libs_dir=`pwd`/libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows
-          export sodium_DIR=${libs_dir}
           mkdir build
           cd build
-          export sodium_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=${libs_dir}  -D_GCC_COMPATIBLE=1
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release   -D_GCC_COMPATIBLE=1
           cmake --build . --parallel $(nproc)
 # --------------------------------------------------------
       - name: Linux - ${{ matrix.qt_version }} - Generate Dependencies and Build

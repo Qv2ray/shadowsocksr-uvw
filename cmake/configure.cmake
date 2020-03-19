@@ -1,7 +1,7 @@
 # Build args
 
 if(NOT WIN32)
-find_package(LibUV REQUIRED)
+    find_package(LibUV REQUIRED)
 else()
     find_package(unofficial-libuv CONFIG REQUIRED)
     set(${LibUV_LIBRARIES} unofficial::libuv::libuv)
@@ -9,10 +9,19 @@ endif()
 
 if (${with_crypto_library} STREQUAL "openssl")
     find_package(OpenSSL REQUIRED)
-    find_package(Sodium REQUIRED)
+    if(NOT WIN32)
+        find_package(Sodium REQUIRED)
+    else()
+        find_package(unofficial-sodium CONFIG REQUIRED)
+        set(${sodium_LIBRARIES} unofficial-sodium::sodium)
+    endif()
     set(USE_CRYPTO_OPENSSL 1)
-    set(LIBCRYPTO
-            ${OPENSSL_CRYPTO_LIBRARY})
+    if(NOT WIN32)
+        set(LIBCRYPTO
+                ${OPENSSL_CRYPTO_LIBRARY})
+    else()
+        set(LIBCRYPTO OpenSSL::SSL OpenSSL::Crypto)
+    endif()
     message("found open ssl")
     include_directories(${OPENSSL_INCLUDE_DIR})
 
