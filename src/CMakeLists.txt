@@ -103,6 +103,7 @@ set(SOURCE_FILES_LOCAL
         cache.c
         )
 endif ()
+include_directories(${LibUV_INCLUDE_DIR})
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -112,7 +113,7 @@ add_library(shadowsocksr::uvw ALIAS ${PROJECT_NAME})
 set(
         COMMON_LINK_LIBS
         ${LIBRT}
-        uv_a
+        ${LibUV_LIBRARIES}
         ${WINSOCK2}
 )
 

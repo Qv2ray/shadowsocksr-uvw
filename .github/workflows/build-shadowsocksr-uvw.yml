@@ -70,12 +70,14 @@ jobs:
         run: |
           sudo add-apt-repository ppa:webispy/grpc
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
+          sudo add-apt-repository ppa:savoury1/backports
           sudo apt update
-          sudo apt install -y libssl-dev tree libsodium-dev ninja-build
+          sudo apt install -y libssl-dev tree libsodium-dev ninja-build libuv1
 # --------------------------------------------------------
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
         run: |
+          brew reinstall libuv
           brew reinstall openssl
           brew reinstall libsodium
           brew reinstall ninja
@@ -88,11 +90,18 @@ jobs:
          choco install -y ninja
          curl -o ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z -L https://github.com/Qv2ray/Qv2ray-deps/releases/download/release/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
          curl -o ./libs/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z
+         curl -o ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
       - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
         if: matrix.platform == 'windows-latest'
         uses: DuckSoft/extract-7z-action@v1.0
         with:
           pathSource: ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
+          pathTarget: ./libs
+      - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
+        if: matrix.platform == 'windows-latest'
+        uses: DuckSoft/extract-7z-action@v1.0
+        with:
+          pathSource: ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
           pathTarget: ./libs
       - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
         if: matrix.platform == 'windows-latest'
@@ -107,7 +116,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib 
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib 
           cmake --build . --parallel $(sysctl -n hw.logicalcpu)
 # --------------------------------------------------------        
       - name: Windows - ${{ matrix.qt_version }} - Generate Dependencies and Build
@@ -120,7 +129,7 @@ jobs:
           mkdir build
           cd build
           export sodium_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF -DOPENSSL_ROOT_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows -D_GCC_COMPATIBLE=1
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=./libs/${{ matrix.arch }}-windows/installed/${{ matrix.arch }}-windows -D_GCC_COMPATIBLE=1
           cmake --build . --parallel $(nproc)
 # --------------------------------------------------------
       - name: Linux - ${{ matrix.qt_version }} - Generate Dependencies and Build
@@ -132,5 +141,5 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dlibuv_buildtests=OFF
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release 
           cmake --build . --parallel $(nproc)

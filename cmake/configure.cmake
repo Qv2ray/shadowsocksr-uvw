@@ -1,5 +1,7 @@
 # Build args
 
+find_package(LibUV REQUIRED)
+
 if (${with_crypto_library} STREQUAL "openssl")
     find_package(OpenSSL REQUIRED)
     find_package(Sodium REQUIRED)

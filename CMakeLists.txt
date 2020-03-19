@@ -18,14 +18,6 @@ endif ()
 
 set(with_crypto_library "openssl" CACHE STRING "build with the given crypto library, TYPE=openssl|polarssl|mbedtls default=openssl")
 set(SSR_UVW_WITH_QT 1 CACHE BOOL "build with qt")
-set(PROJECT_CMAKE_IN ${PROJECT_SOURCE_DIR}/cmake/in)
-set(PROJECT_DEPS_DIR ${PROJECT_SOURCE_DIR}/deps)
-set(LIBUV_DEPS_DIR ${PROJECT_DEPS_DIR}/libuv)
-configure_file(${PROJECT_CMAKE_IN}/deps.in ${PROJECT_DEPS_DIR}/CMakeLists.txt)
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" . WORKING_DIRECTORY ${PROJECT_DEPS_DIR})
-execute_process(COMMAND ${CMAKE_COMMAND} --build . WORKING_DIRECTORY ${PROJECT_DEPS_DIR})
-add_subdirectory(${LIBUV_DEPS_DIR})
-include_directories(${LIBUV_DEPS_DIR}/include)
 
 
 include ( cmake/dist.cmake )
