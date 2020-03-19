@@ -1,6 +1,11 @@
 # Build args
 
+if(NOT WIN32)
 find_package(LibUV REQUIRED)
+else()
+    find_package(unofficial-libuv CONFIG REQUIRED)
+    set(${LibUV_LIBRARIES} unofficial::libuv::libuv)
+endif()
 
 if (${with_crypto_library} STREQUAL "openssl")
     find_package(OpenSSL REQUIRED)
