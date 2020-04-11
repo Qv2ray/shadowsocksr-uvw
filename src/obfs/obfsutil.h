@@ -1,6 +1,6 @@
 #ifndef _OBFS_OBFSUTIL_H
 #define _OBFS_OBFSUTIL_H
-
+#include <stdint.h>
 #ifdef __cplusplus
 extern "C"
 {
