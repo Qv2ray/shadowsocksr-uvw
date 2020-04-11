@@ -3,14 +3,14 @@
 #include "utils.h"
 struct LogHelper
 {
-    const char * p_;
-    LogHelper(const char* p):p_(p)
+    const char *p_;
+    LogHelper(const char *p) : p_(p)
     {
-        LOGI("enter %s",p);
+        LOGI("enter %s", p);
     }
     ~LogHelper()
     {
-        LOGI("leave %s",p_);
+        LOGI("leave %s", p_);
     }
 };
 

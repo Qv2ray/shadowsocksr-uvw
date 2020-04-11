@@ -1,33 +1,27 @@
 #include "SSRThread.hpp"
-#include "shadowsocks.h"
-SSRThread::SSRThread(int localPort,
-                     int remotePort,
-                     std::string local_addr,
-                     std::string remote_host,
-                     std::string method,
-                     std::string password,
-                     std::string obfs,
-                     std::string obfs_param,
-                     std::string protocol,
-                     std::string protocol_param,
-                     QString inboundTag):
-      localPort(localPort),
-      remotePort(remotePort),
-      local_addr(std::move(local_addr)),
-      remote_host(std::move(remote_host)),
-      method(std::move(method)),
-      password(std::move(password)),
-      obfs(std::move(obfs)),
-      obfs_param(std::move(obfs_param)),
-      protocol(std::move(protocol)),
-      protocol_param(std::move(protocol_param)),
-      inboundTag(std::move(inboundTag))
-{
 
-}
-QString SSRThread::getInboundTag()
+#include "shadowsocks.h"
+SSRThread::SSRThread(int localPort,           //
+                     int remotePort,          //
+                     std::string local_addr,  //
+                     std::string remote_host, //
+                     std::string method,      //
+                     std::string password,    //
+                     std::string obfs,        //
+                     std::string obfs_param,  //
+                     std::string protocol,    //
+                     std::string protocol_param)
+    : localPort(localPort),                //
+      remotePort(remotePort),              //
+      local_addr(std::move(local_addr)),   //
+      remote_host(std::move(remote_host)), //
+      method(std::move(method)),           //
+      password(std::move(password)),       //
+      obfs(std::move(obfs)),               //
+      obfs_param(std::move(obfs_param)),   //
+      protocol(std::move(protocol)),       //
+      protocol_param(std::move(protocol_param))
 {
-    return inboundTag;
 }
 void SSRThread::run()
 {
@@ -43,8 +37,8 @@ void SSRThread::run()
     profile.protocol_param = protocol_param.data();
     profile.remote_port = remotePort;
     profile.local_port = localPort;
-    profile.mtu = 0;//we don't use udp relay, therefore we set mtu to zero.
-    profile.mode = 0;//we don't use udp relay, therefore we set mode to zero.
+    profile.mtu = 0;  // we don't use udp relay, therefore we set mtu to zero.
+    profile.mode = 0; // we don't use udp relay, therefore we set mode to zero.
     profile.acl = nullptr;
     profile.fast_open = 1;
     profile.mptcp = 0;
@@ -53,7 +47,7 @@ void SSRThread::run()
 
 SSRThread::~SSRThread()
 {
-    if(isRunning())
+    if (isRunning())
     {
         stop_ss_local_server();
         wait();

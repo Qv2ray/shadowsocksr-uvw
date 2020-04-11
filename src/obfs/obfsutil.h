@@ -2,26 +2,27 @@
 #define _OBFS_OBFSUTIL_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 #ifndef _MSC_VER
-#define VLA(TYPE,SIZE,NAME) TYPE NAME[SIZE]
-#define VLA_FREE(NAME)
-#else 
-#define VLA(TYPE,SIZE,NAME) TYPE* NAME=(TYPE*)malloc(sizeof(TYPE)*SIZE)
-#define VLA_FREE(NAME) free(NAME)
+    #define VLA(TYPE, SIZE, NAME) TYPE NAME[SIZE]
+    #define VLA_FREE(NAME)
+#else
+    #define VLA(TYPE, SIZE, NAME) TYPE *NAME = (TYPE *) malloc(sizeof(TYPE) * SIZE)
+    #define VLA_FREE(NAME) free(NAME)
 #endif
-int get_head_size(char *plaindata, int size, int def_size);
+    int get_head_size(char *plaindata, int size, int def_size);
 
-void init_shift128plus(void);
+    void init_shift128plus(void);
 
-uint64_t xorshift128plus(void);
+    uint64_t xorshift128plus(void);
 
-int ss_md5_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len, uint8_t *enc_key, int enc_key_len);
+    int ss_md5_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len, uint8_t *enc_key, int enc_key_len);
 
-int ss_sha1_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len, uint8_t *enc_key, int enc_key_len);
+    int ss_sha1_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len, uint8_t *enc_key, int enc_key_len);
 
-void memintcopy_lt(void *mem, uint32_t val);
+    void memintcopy_lt(void *mem, uint32_t val);
 
 #ifdef __cplusplus
 }

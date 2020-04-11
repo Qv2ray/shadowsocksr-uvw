@@ -22,26 +22,27 @@
 #ifndef _SHADOWSOCKS_H
 #define _SHADOWSOCKS_H
 
-typedef struct {
+typedef struct
+{
     /*  Required  */
     const char *remote_host;    // hostname or ip of remote server
     const char *local_addr;     // local ip to bind
     const char *method;         // encryption method
     const char *password;       // password of remote server
-    int remote_port;      // port number of remote server
-    int local_port;       // port number of local server
-    int timeout;          // connection timeout
+    int remote_port;            // port number of remote server
+    int local_port;             // port number of local server
+    int timeout;                // connection timeout
     const char *obfs;           // ssr
     const char *obfs_param;     // ssr
     const char *protocol;       // ssr
     const char *protocol_param; // ssr
     /*  Optional, set NULL if not valid   */
-    const char *acl;            // file path to acl
-    int fast_open;        // enable tcp fast open
-    int mode;             // enable udp relay
-    int mtu;              // MTU of interface
-    int mptcp;            // enable multipath TCP
-    int verbose;          // verbose mode
+    const char *acl; // file path to acl
+    int fast_open;   // enable tcp fast open
+    int mode;        // enable udp relay
+    int mtu;         // MTU of interface
+    int mptcp;       // enable multipath TCP
+    int verbose;     // verbose mode
 } profile_t;
 
 /* An example profile
@@ -63,31 +64,32 @@ typedef struct {
  */
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/*
- * Create and start a shadowsocks local server.
- *
- * Calling this function will block the current thread forever if the server
- * starts successfully.
- *
- * Make sure start the server in a separate process to avoid any potential
- * memory and socket leak.
- *
- * If failed, -1 is returned. Errors will output to the log file.
- */
-int start_ss_local_server(profile_t profile);
-int start_ssr_uv_local_server(profile_t profile);
+    /*
+     * Create and start a shadowsocks local server.
+     *
+     * Calling this function will block the current thread forever if the server
+     * starts successfully.
+     *
+     * Make sure start the server in a separate process to avoid any potential
+     * memory and socket leak.
+     *
+     * If failed, -1 is returned. Errors will output to the log file.
+     */
+    int start_ss_local_server(profile_t profile);
+    int start_ssr_uv_local_server(profile_t profile);
 
-int stop_ss_local_server();
+    int stop_ss_local_server();
 #ifdef __cplusplus
 }
 #endif
 
 // To stop the service on posix system, just kill the daemon process
 // kill(pid, SIGKILL);
-// Otherwise, If you start the service in a thread, you may need to send a signal SIGUSER1 to the thread.
-// pthread_kill(pthread_t, SIGUSR1);
+// Otherwise, If you start the service in a thread, you may need to send a
+// signal SIGUSER1 to the thread. pthread_kill(pthread_t, SIGUSR1);
 
 #endif // _SHADOWSOCKS_H

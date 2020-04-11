@@ -7,17 +7,21 @@ extern "C"
 #include "shadowsocks.h"
 }
 #include "CipherEnv.hpp"
-namespace uvw {
-class TCPHandle;
+namespace uvw
+{
+    class TCPHandle;
 }
 #include "Buffer.hpp"
+
 #include <functional>
-class ConnectionContext {
-private:
+class ConnectionContext
+{
+  private:
     ObfsClass *obfsClassPtr = nullptr;
     CipherEnv *cipherEnvPtr = nullptr;
-public:
-    using enc_ctx_release_t=std::function<void(struct enc_ctx *)>;
+
+  public:
+    using enc_ctx_release_t = std::function<void(struct enc_ctx *)>;
     std::unique_ptr<Buffer> localBuf;
     std::unique_ptr<Buffer> remoteBuf;
     std::unique_ptr<obfs, decltype(obfs_class::dispose)> protocolPtr;
@@ -37,11 +41,7 @@ public:
 
     void setRemoteTcpHandle(std::shared_ptr<uvw::TCPHandle> tcp);
 
-    server_info_t construct_obfs(
-            CipherEnv &cipherEnv,
-            ObfsClass &obfsClass,
-            const profile_t &profile,
-            int server_info_head_len);
+    server_info_t construct_obfs(CipherEnv &cipherEnv, ObfsClass &obfsClass, const profile_t &profile, int server_info_head_len);
 
     ~ConnectionContext();
 };
