@@ -72,7 +72,7 @@ jobs:
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
           sudo add-apt-repository ppa:savoury1/backports
           sudo apt update
-          sudo apt install -y libssl-dev tree libsodium-dev ninja-build libuv1 libuv1-dev
+          sudo apt install -y libssl-dev tree libsodium-dev ninja-build libuv1-dev
 # --------------------------------------------------------
       - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
         if: matrix.platform == 'macos-latest'
@@ -89,7 +89,7 @@ jobs:
          mkdir -p ./libs
          choco install -y ninja
          curl -o ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/shadowsocksr-uvw-deps/releases/download/release/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
-         curl -o ./libs/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/Qv2ray-deps/releases/download/release/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z
+         curl -o ./libs/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/shadowsocksr-uvw-deps/releases/download/release/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z
          curl -o ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/shadowsocksr-uvw-deps/releases/download/release/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
       - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
         if: matrix.platform == 'windows-latest'
@@ -116,7 +116,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib 
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib -Dsodium_USE_STATIC_LIBS=1 
           cmake --build . --parallel $(sysctl -n hw.logicalcpu)
 # --------------------------------------------------------        
       - name: Windows - ${{ matrix.qt_version }} - Generate Dependencies and Build
@@ -140,5 +140,5 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release 
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dsodium_USE_STATIC_LIBS=1 
           cmake --build . --parallel $(nproc)
