@@ -58,15 +58,14 @@ They may be set by end users to point at libuv components.
 #  License text for the above reference.)
 
 #-----------------------------------------------------------------------------
+
 find_library(LibUV_LIBRARY
-  NAMES uv
-  HINTS $ENV{libs_dir}
+    NAMES libuv.a uv
   )
 mark_as_advanced(LibUV_LIBRARY)
 
 find_path(LibUV_INCLUDE_DIR
   NAMES uv.h
-  HINTS $ENV{libs_dir}
   )
 mark_as_advanced(LibUV_INCLUDE_DIR)
 
@@ -123,6 +122,7 @@ set(LIBUV_FOUND ${LibUV_FOUND})
 if(LibUV_FOUND)
   set(LibUV_INCLUDE_DIRS ${LibUV_INCLUDE_DIR})
   set(LibUV_LIBRARIES ${LibUV_LIBRARY})
+  message("libuv library:" ${LibUV_LIBRARY})
   if(NOT TARGET LibUV::LibUV)
     add_library(LibUV::LibUV UNKNOWN IMPORTED)
     set_target_properties(LibUV::LibUV PROPERTIES
