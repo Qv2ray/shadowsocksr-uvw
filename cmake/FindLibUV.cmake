@@ -58,10 +58,15 @@ They may be set by end users to point at libuv components.
 #  License text for the above reference.)
 
 #-----------------------------------------------------------------------------
-
+if(NOT DEFINED sodium_USE_STATIC_LIBS)
 find_library(LibUV_LIBRARY
-    NAMES libuv.a uv
+    NAMES libuv.a 
   )
+else()
+find_library(LibUV_LIBRARY
+    NAMES uv
+  )
+endif()
 mark_as_advanced(LibUV_LIBRARY)
 
 find_path(LibUV_INCLUDE_DIR

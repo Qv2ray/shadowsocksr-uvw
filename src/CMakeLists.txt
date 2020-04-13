@@ -9,16 +9,16 @@ elseif(NOT APPLE)
 endif()
 
 if(SSR_UVW_WITH_QT)
-message("find Qt5")
-add_definitions(-DSSR_UVW_WITH_QT)
-find_package(Qt5 COMPONENTS Core REQUIRED)
+    message("find Qt5")
+    add_definitions(-DSSR_UVW_WITH_QT)
+    find_package(Qt5 COMPONENTS Core REQUIRED)
 endif()
 
 set(USE_CRYPTO_OPENSSL 1)
 
 if(SSR_UVW_WITH_QT)
-qt5_wrap_cpp(ssr_thread_moc SSRThread.hpp)
-set(SOURCE_FILES_LOCAL
+    qt5_wrap_cpp(ssr_thread_moc SSRThread.hpp)
+    set(SOURCE_FILES_LOCAL
         utils.h
         obfs/crc32.h
         obfs/auth.c
@@ -63,7 +63,7 @@ set(SOURCE_FILES_LOCAL
         ${ssr_thread_moc}
         )
 else()
-set(SOURCE_FILES_LOCAL
+    set(SOURCE_FILES_LOCAL
         utils.h
         obfs/crc32.h
         obfs/auth.c
@@ -109,26 +109,26 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(${PROJECT_NAME} ${SOURCE_FILES_LOCAL})
 add_library(shadowsocksr::uvw ALIAS ${PROJECT_NAME})
-
+set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE 1)
 set(
-        COMMON_LINK_LIBS
-        ${LIBRT}
-        ${LibUV_LIBRARIES}
-        ${WINSOCK2}
-)
+    COMMON_LINK_LIBS
+    ${LIBRT}
+    ${LibUV_LIBRARIES}
+    ${WINSOCK2}
+    )
 
 set(ss_lib_net
-        ${LIBCRYPTO}
-        ${sodium_LIBRARIES}
-        )
+    ${LIBCRYPTO}
+    ${sodium_LIBRARIES}
+    )
 
 
 if(SSR_UVW_WITH_QT)
     target_link_libraries(${PROJECT_NAME} Qt5::Core
-            ${COMMON_LINK_LIBS}
-            )
+        ${COMMON_LINK_LIBS}
+        )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-        ${ss_lib_net} ${COMMON_LINK_LIBS}
-        )
+    ${ss_lib_net} ${COMMON_LINK_LIBS}
+    )

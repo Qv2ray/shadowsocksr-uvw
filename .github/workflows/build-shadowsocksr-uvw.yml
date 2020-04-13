@@ -111,7 +111,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib -Dsodium_USE_STATIC_LIBS=1 
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@1.1 -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@1.1/lib 
           cmake --build . --parallel $(sysctl -n hw.logicalcpu)
 # --------------------------------------------------------        
       - name: Windows - ${{ matrix.qt_version }} - Generate Dependencies and Build
@@ -135,5 +135,5 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -Dsodium_USE_STATIC_LIBS=1 
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release 
           cmake --build . --parallel $(nproc)

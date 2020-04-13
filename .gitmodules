@@ -1,0 +1,6 @@
+[submodule "libsodium"]
+	path = libsodium
+	url = https://github.com/jedisct1/libsodium.git
+[submodule "libuv"]
+	path = libuv
+	url = https://github.com/libuv/libuv.git

@@ -1,24 +1,27 @@
 # Build args
-
-if(NOT WIN32)
-    find_package(LibUV REQUIRED)
-else()
-    find_package(unofficial-libuv CONFIG REQUIRED)
-    set(${LibUV_LIBRARIES} unofficial::libuv::libuv)
+if(USE_SYSTEM_LIBUV)
+    if(NOT WIN32)
+        find_package(LibUV REQUIRED)
+    else()
+        find_package(unofficial-libuv CONFIG REQUIRED)
+        set(${LibUV_LIBRARIES} unofficial::libuv::libuv)
+    endif()
 endif()
 
-if (${with_crypto_library} STREQUAL "openssl")
+if (${WITH_CRYPTO_LIBRARY} STREQUAL "openssl")
     find_package(OpenSSL REQUIRED)
-    if(NOT WIN32)
-        find_package(Sodium REQUIRED)
-    else()
-        find_package(unofficial-sodium CONFIG REQUIRED)
-        set(${sodium_LIBRARIES} unofficial-sodium::sodium)
+    if(USE_SYSTEM_SODIUM)
+        if(NOT WIN32)
+            find_package(Sodium REQUIRED)
+        else()
+            find_package(unofficial-sodium CONFIG REQUIRED)
+            set(${sodium_LIBRARIES} unofficial-sodium::sodium)
+        endif()
     endif()
     set(USE_CRYPTO_OPENSSL 1)
     if(NOT WIN32)
         set(LIBCRYPTO
-                ${OPENSSL_CRYPTO_LIBRARY})
+            ${OPENSSL_CRYPTO_LIBRARY})
     else()
         set(LIBCRYPTO OpenSSL::SSL OpenSSL::Crypto)
     endif()
@@ -151,19 +154,19 @@ endif(HAVE_WINSOCK2_H)
 find_library ( HAVE_LIBSOCKET socket )
 
 check_c_source_compiles(
-        "
-#include <sys/time.h>
-#include <time.h>
-int main(int argc, char** argv) {return 0;}
-"
-        TIME_WITH_SYS_TIME
-)
+    "
+    #include <sys/time.h>
+    #include <time.h>
+    int main(int argc, char** argv) {return 0;}
+    "
+    TIME_WITH_SYS_TIME
+    )
 
 check_c_source_compiles("
 __thread int tls;
 
 int main(void) {
-    return 0;
+return 0;
 }" TLS)
 
 check_type_size(pid_t PID_T)
