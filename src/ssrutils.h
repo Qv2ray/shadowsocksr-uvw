@@ -178,7 +178,9 @@ extern "C"
 #define HAS_SYSLOG
     extern int use_syslog;
 
+#ifndef TIME_FORMAT
 #define TIME_FORMAT "%F %T"
+#endif // TIME_FORMAT
 
 #define USE_SYSLOG(ident)                                                                                                           \
     do                                                                                                                              \
