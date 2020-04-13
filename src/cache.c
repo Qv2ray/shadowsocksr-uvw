@@ -27,7 +27,7 @@
 
 #include "cache.h"
 
-#include "utils.h"
+#include "ssrutils.h"
 
 #include <errno.h>
 #include <stdlib.h>

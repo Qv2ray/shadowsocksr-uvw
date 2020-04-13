@@ -4,7 +4,7 @@
 #include "crc32.h"
 #include "encrypt.h"
 #include "obfsutil.h"
-#include "utils.h"
+#include "ssrutils.h"
 
 #include <string.h>
 #include <time.h>

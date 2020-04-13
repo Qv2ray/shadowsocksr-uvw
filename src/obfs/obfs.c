@@ -7,7 +7,7 @@
 #include "http_simple.h"
 #include "obfsutil.h"
 #include "tls1.2_ticket.h"
-#include "utils.h"
+#include "ssrutils.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -19,7 +19,7 @@ set(USE_CRYPTO_OPENSSL 1)
 if(SSR_UVW_WITH_QT)
     qt5_wrap_cpp(ssr_thread_moc SSRThread.hpp)
     set(SOURCE_FILES_LOCAL
-        utils.h
+        ssrutils.h
         obfs/crc32.h
         obfs/auth.c
         obfs/auth.h
@@ -50,7 +50,7 @@ if(SSR_UVW_WITH_QT)
         encrypt.h
         cache.h
         SSRThread.cpp
-        utils.c
+        ssrutils.c
         shadowsocks.h
         CipherEnv.hpp
         SSRThread.hpp
@@ -64,7 +64,7 @@ if(SSR_UVW_WITH_QT)
         )
 else()
     set(SOURCE_FILES_LOCAL
-        utils.h
+        ssrutils.h
         obfs/crc32.h
         obfs/auth.c
         obfs/auth.h
@@ -92,7 +92,7 @@ else()
         ConnectionContext.cpp
         encrypt.h
         cache.h
-        utils.c
+        ssrutils.c
         shadowsocks.h
         CipherEnv.hpp
         catch2.hpp

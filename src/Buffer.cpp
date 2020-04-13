@@ -3,7 +3,7 @@
 #include "ConnectionContext.hpp"
 #include "ObfsClass.hpp"
 #include "encrypt.h"
-#include "utils.h"
+#include "ssrutils.h"
 #include "uvw_single.hpp"
 
 #include <algorithm>

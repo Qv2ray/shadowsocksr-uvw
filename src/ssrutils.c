@@ -24,7 +24,7 @@
     #include "config.h"
 #endif
 
-#include "utils.h"
+#include "ssrutils.h"
 
 #include <ctype.h>
 #include <stdlib.h>
