@@ -683,6 +683,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium
 ${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium/include
 ${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium/include/sodium
 #For version.h.in to version.h
+${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/sodium
 CACHE INTERNAL "libsodium library" FORCE
 )
