@@ -678,14 +678,13 @@ if (BUILD_TESTING)
 endif ()
 
 
-
-set(libsodium_include_dirs 
+include_directories(
 ${CMAKE_CURRENT_SOURCE_DIR}/src
 ${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium
 ${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium/include
 ${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium/include/sodium
 #For version.h.in to version.h
-${CMAKE_BINARY_DIR}/sodium/version.h
+${CMAKE_BINARY_DIR}/sodium
 )
 
 # References:
