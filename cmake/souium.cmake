@@ -679,19 +679,14 @@ endif ()
 
 
 
-install(DIRECTORY src/libsodium/include/
-    DESTINATION include/
-    USE_SOURCE_PERMISSIONS
-    PATTERN "*.h"
-    PATTERN "*.h.in" EXCLUDE
-    REGEX "private($|/)" EXCLUDE
+set(libsodium_include_dirs 
+${CMAKE_CURRENT_SOURCE_DIR}/src
+${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium
+${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium/include
+${CMAKE_CURRENT_SOURCE_DIR}/src/libsodium/include/sodium
+#For version.h.in to version.h
+${CMAKE_BINARY_DIR}/sodium/version.h
 )
-
-install(FILES ${CMAKE_BINARY_DIR}/sodium/version.h
-    DESTINATION include/sodium
-)
-
-set(libsodium_include_dirs include)
 
 # References:
 # https://raw.githubusercontent.com/microsoft/vcpkg/master/ports/libsodium/CMakeLists.txt
