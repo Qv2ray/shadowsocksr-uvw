@@ -40,6 +40,8 @@ jobs:
         with:
           python-version: '3.7'
           architecture: ${{ matrix.arch }}
+      - name: Restoring submodules
+        run: git submodule update --init
 # =========================================================================================================
       - name: Install MSVC compiler
         if: matrix.platform == 'windows-latest'
