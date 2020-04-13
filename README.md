@@ -4,11 +4,19 @@ A minimal dependency shadowsocksr implementation.
 
 
 ## How to build
-
+If you want shadowsocksr-uvw to avoid using the system's own libuv and libsodium, the default compilation options will be helpful. The compilation options are as follows, which will link libuv and libsodium statically.
 ````bash
+git submodule update --init --recursive
 mkdir build
 cd build
 cmake .. -DSSR_UVW_WITH_QT=0
+make
+````
+By default, shadowsocksr-uvw will use the libuv and libsodium in the submodule for static linking. To avoid this, you can directly specify the compilation options as shown below.
+````bash
+mkdir build
+cd build
+cmake .. -DSSR_UVW_WITH_QT=0 -DUSE_SYSTEM_SODIUM=ON -DUSE_SYSTEM_LIBUV=ON -DSTATIC_LINK_LIBUV=OFF -DSTATIC_LINK_SODIUM=OFF
 make
 ````
 
