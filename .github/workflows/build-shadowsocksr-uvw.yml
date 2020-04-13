@@ -70,17 +70,8 @@ jobs:
         run: |
           sudo add-apt-repository ppa:webispy/grpc
           sudo add-apt-repository ppa:carsten-uppenbrink-net/openssl
-          sudo add-apt-repository ppa:savoury1/backports
           sudo apt update
-          sudo apt install -y libssl-dev tree libsodium-dev ninja-build libuv1-dev
-# --------------------------------------------------------
-      - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
-        if: matrix.platform == 'macos-latest'
-        run: |
-          brew reinstall libuv
-          brew reinstall openssl
-          brew reinstall libsodium
-          brew reinstall ninja
+          sudo apt install -y libssl-dev tree ninja-build 
 # --------------------------------------------------------
       - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Build preparation - Download Dependencies
         shell: bash
@@ -88,21 +79,7 @@ jobs:
         run: |
          mkdir -p ./libs
          choco install -y ninja
-         curl -o ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/shadowsocksr-uvw-deps/releases/download/release/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
          curl -o ./libs/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/shadowsocksr-uvw-deps/releases/download/release/Qv2ray-deps-openssl-${{ matrix.arch }}-windows.7z
-         curl -o ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z -L https://github.com/DuckVador/shadowsocksr-uvw-deps/releases/download/release/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
-      - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
-        if: matrix.platform == 'windows-latest'
-        uses: DuckSoft/extract-7z-action@v1.0
-        with:
-          pathSource: ./libs/Qv2ray-deps-libsodium-${{ matrix.arch }}-windows.7z
-          pathTarget: ./libs
-      - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
-        if: matrix.platform == 'windows-latest'
-        uses: DuckSoft/extract-7z-action@v1.0
-        with:
-          pathSource: ./libs/Qv2ray-deps-libuv-${{ matrix.arch }}-windows.7z
-          pathTarget: ./libs
       - name: Win-${{ matrix.arch }} - Build preparation - Extract Dependencies
         if: matrix.platform == 'windows-latest'
         uses: DuckSoft/extract-7z-action@v1.0

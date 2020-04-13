@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
     set(WINSOCK2 ws2_32)
+    set(CRYPT32 crypt32)
 elseif(NOT APPLE)
     find_library(LIBRT rt)
 endif()
@@ -115,6 +116,7 @@ set(
     ${LIBRT}
     ${LibUV_LIBRARIES}
     ${WINSOCK2}
+    ${CRYPT32}
     )
 
 set(ss_lib_net
