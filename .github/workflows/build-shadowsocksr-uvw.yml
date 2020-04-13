@@ -24,6 +24,9 @@ jobs:
             arch: x86
           - platform: macos-latest
             arch: x86
+          - platform: windows-latest
+            arch: x86
+            qt_version: 5.11.1
       fail-fast: false
         
     runs-on: ${{ matrix.platform }}
