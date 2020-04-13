@@ -73,6 +73,12 @@ jobs:
           sudo apt update
           sudo apt install -y libssl-dev tree ninja-build 
 # --------------------------------------------------------
+      - name: macOS - ${{ matrix.qt_version }} - Build preparation - Install Packages 
+        if: matrix.platform == 'macos-latest'
+        run: |
+          brew reinstall openssl
+          brew reinstall ninja
+# --------------------------------------------------------
       - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Build preparation - Download Dependencies
         shell: bash
         if: matrix.platform == 'windows-latest'
