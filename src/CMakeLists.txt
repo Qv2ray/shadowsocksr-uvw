@@ -108,7 +108,7 @@ include_directories(${LibUV_INCLUDE_DIR})
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library(${PROJECT_NAME} ${SOURCE_FILES_LOCAL})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES_LOCAL})
 add_library(shadowsocksr::uvw ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE 1)
 set(
