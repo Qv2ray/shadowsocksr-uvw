@@ -168,7 +168,7 @@ class SSRUV
     void panic(const std::shared_ptr<uvw::TCPHandle> &clientConnection)
     {
         if (verbose)
-            LOGE("panic close client connection");
+            LOGI("panic close client connection");
         if (inComingConnections.find(clientConnection) != inComingConnections.end())
         {
             auto ctxPtr = inComingConnections[clientConnection];
