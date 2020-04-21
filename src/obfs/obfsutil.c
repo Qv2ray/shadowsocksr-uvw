@@ -61,6 +61,10 @@ int ss_sha1_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len
     return ss_sha1_hmac_with_key(auth, msg, msg_len, auth_key, enc_iv_len + enc_key_len);
 }
 
+int data_size_list_compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
 int find_pos(int arr[], int length, int key) {
     int low = 0;
     int high = length - 1;

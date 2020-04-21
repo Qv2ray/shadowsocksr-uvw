@@ -23,6 +23,12 @@ SSRThread::SSRThread(int localPort,           //
       protocol_param(std::move(protocol_param))
 {
 }
+
+SSRThread::~SSRThread()
+{
+    stop();
+}
+
 void SSRThread::run()
 {
     profile_t profile;
@@ -45,7 +51,7 @@ void SSRThread::run()
     start_ssr_uv_local_server(profile);
 }
 
-SSRThread::~SSRThread()
+void SSRThread::stop()
 {
     if (isRunning())
     {

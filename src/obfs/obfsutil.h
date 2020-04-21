@@ -22,6 +22,8 @@ extern "C"
 
     int ss_sha1_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len, uint8_t *enc_key, int enc_key_len);
 
+    int data_size_list_compare(const void *a, const void *b);
+    
     int find_pos(int arr[], int length, int key);
 
     void memintcopy_lt(void *mem, uint32_t val);
