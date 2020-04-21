@@ -61,6 +61,30 @@ int ss_sha1_hmac(char *auth, char *msg, int msg_len, uint8_t *iv, int enc_iv_len
     return ss_sha1_hmac_with_key(auth, msg, msg_len, auth_key, enc_iv_len + enc_key_len);
 }
 
+int data_size_list_compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int find_pos(int arr[], int length, int key) {
+    int low = 0;
+    int high = length - 1;
+    int middle = -1;
+
+    if (key > arr[high])
+        return length;
+
+    while (low < high) {
+        middle = (low + high) / 2;
+        if (key > arr[middle]) {
+            low = middle + 1;
+        }
+        else if (key <= arr[middle]) {
+            high = middle;
+        }
+    }
+    return low;
+}
+
 void memintcopy_lt(void *mem, uint32_t val)
 {
     ((uint8_t *) mem)[0] = (uint8_t)(val);

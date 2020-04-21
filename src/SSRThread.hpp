@@ -17,11 +17,16 @@ class SSRThread : public QThread
                        std::string obfs_param,  //
                        std::string protocol,    //
                        std::string protocol_param);
-    void run() override;
     ~SSRThread() override;
   signals:
     void OnDataReady(quint64 dataUp, quint64 dataDown);
     void onSSRThreadLog(QString);
+
+protected:
+  void run() override;
+
+public slots:
+  void stop();
 
   private:
     int localPort = 0;
