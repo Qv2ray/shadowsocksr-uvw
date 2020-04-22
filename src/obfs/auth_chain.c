@@ -204,19 +204,23 @@ void auth_chain_local_data_init(auth_chain_local_data *local)
     local->data_size_list2_len = 0; // Thanks to @hiboy
 }
 
-unsigned int auth_chain_a_get_rand_len(int datalength, shift128plus_ctx *random, uint8_t *last_hash, int data_size_list[],
-                                       int data_size_list_len, int data_size_list2[], int data_size_list2_len, int overhead)
-{
+unsigned int auth_chain_a_get_rand_len(
+        auth_chain_local_data *local,
+        server_info_t *server,
+        int datalength,
+        shift128plus_ctx *random,
+        uint8_t *last_hash
+) {
     if (datalength > 1440)
         return 0;
     shift128plus_init_from_bin_datalen(random, last_hash, 16, datalength, auth_chain_rand_init_loop);
     if (datalength > 1300)
-        return shift128plus_next(random) % 31;
+        return (unsigned int) (shift128plus_next(random) % 31);
     if (datalength > 900)
-        return shift128plus_next(random) % 127;
+        return (unsigned int) (shift128plus_next(random) % 127);
     if (datalength > 400)
-        return shift128plus_next(random) % 521;
-    return shift128plus_next(random) % 1021;
+        return (unsigned int) (shift128plus_next(random) % 521);
+    return (unsigned int) (shift128plus_next(random) % 1021);
 }
 
 unsigned int auth_chain_b_get_rand_len(
@@ -794,7 +798,7 @@ int auth_chain_a_pack_data(char *data, int datalength, char *outdata, auth_chain
     outdata[1] = (char) ((uint8_t)(datalength >> 8) ^ local->last_client_hash[15]);
 
     {
-        uint8_t * rnd_data = (uint8_t *)malloc(rand_len);
+        VLA(uint8_t, rand_len, rnd_data);
         rand_bytes(rnd_data, (int) rand_len);
         if (datalength > 0)
         {
@@ -1110,7 +1114,7 @@ int auth_chain_a_client_udp_pre_encrypt(obfs *self, char **pplaindata, int datal
     uint8_t hash[16];
     ss_md5_hmac_with_key((char *) hash, auth_data, 3, server->key, server->key_len);
     int rand_len = auth_chain_udp_get_rand_len(&local->random_client, hash);
-    uint8_t *rnd_data = (uint8_t *)malloc(rand_len);
+    VLA(uint8_t, rand_len, rnd_data);
     rand_bytes(rnd_data, (int) rand_len);
     int outlength = datalength + rand_len + 8;
 
