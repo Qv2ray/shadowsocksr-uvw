@@ -25,24 +25,24 @@
 typedef struct
 {
     /*  Required  */
-    const char *remote_host;    // hostname or ip of remote server
-    const char *local_addr;     // local ip to bind
-    const char *method;         // encryption method
-    const char *password;       // password of remote server
-    int remote_port;            // port number of remote server
-    int local_port;             // port number of local server
-    int timeout;                // connection timeout
-    const char *obfs;           // ssr
-    const char *obfs_param;     // ssr
-    const char *protocol;       // ssr
-    const char *protocol_param; // ssr
+    const char* remote_host; // hostname or ip of remote server
+    const char* local_addr; // local ip to bind
+    const char* method; // encryption method
+    const char* password; // password of remote server
+    int remote_port; // port number of remote server
+    int local_port; // port number of local server
+    int timeout; // connection timeout
+    const char* obfs; // ssr
+    const char* obfs_param; // ssr
+    const char* protocol; // ssr
+    const char* protocol_param; // ssr
     /*  Optional, set NULL if not valid   */
-    const char *acl; // file path to acl
-    int fast_open;   // enable tcp fast open
-    int mode;        // enable udp relay
-    int mtu;         // MTU of interface
-    int mptcp;       // enable multipath TCP
-    int verbose;     // verbose mode
+    const char* acl; // file path to acl
+    int fast_open; // enable tcp fast open
+    int mode; // enable udp relay
+    int mtu; // MTU of interface
+    int mptcp; // enable multipath TCP
+    int verbose; // verbose mode
 } profile_t;
 
 /* An example profile

@@ -21,7 +21,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-    #include "config.h"
+#include "config.h"
 #endif
 
 #include "ssrutils.h"
@@ -34,7 +34,7 @@
 #define INT_DIGITS 19 /* enough for 64 bit integer */
 
 #ifdef LIB_ONLY
-FILE *logfile;
+FILE* logfile;
 #endif
 
 #ifdef HAS_SYSLOG
@@ -43,24 +43,19 @@ int use_syslog = 0;
 
 int use_tty = 1;
 
-char *ss_itoa(int i)
+char* ss_itoa(int i)
 {
     /* Room for INT_DIGITS digits, - and '\0' */
     static char buf[INT_DIGITS + 2];
-    char *p = buf + INT_DIGITS + 1; /* points to terminating '\0' */
-    if (i >= 0)
-    {
-        do
-        {
+    char* p = buf + INT_DIGITS + 1; /* points to terminating '\0' */
+    if (i >= 0) {
+        do {
             *--p = '0' + (i % 10);
             i /= 10;
         } while (i != 0);
         return p;
-    }
-    else
-    { /* i < 0 */
-        do
-        {
+    } else { /* i < 0 */
+        do {
             *--p = '0' - (i % 10);
             i /= 10;
         } while (i != 0);
@@ -69,21 +64,21 @@ char *ss_itoa(int i)
     return p;
 }
 
-int ss_isnumeric(const char *s)
+int ss_isnumeric(const char* s)
 {
     if (!s || !*s)
         return 0;
-    while (isdigit(*s)) ++s;
+    while (isdigit(*s))
+        ++s;
     return *s == '\0';
 }
 
-char *ss_strndup(const char *s, size_t n)
+char* ss_strndup(const char* s, size_t n)
 {
     size_t len = strlen(s);
-    char *ret;
+    char* ret;
 
-    if (len <= n)
-    {
+    if (len <= n) {
         return strdup(s);
     }
 
@@ -93,35 +88,33 @@ char *ss_strndup(const char *s, size_t n)
     return ret;
 }
 
-char *ss_strdup(const char *s)
+char* ss_strdup(const char* s)
 {
-    if (!s)
-    {
+    if (!s) {
         return NULL;
     }
 
     return strdup(s);
 }
 
-void FATAL(const char *msg)
+void FATAL(const char* msg)
 {
     LOGE("%s", msg);
     exit(-1);
 }
 
-void *ss_malloc(size_t size)
+void* ss_malloc(size_t size)
 {
-    void *tmp = malloc(size);
+    void* tmp = malloc(size);
     if (tmp == NULL)
         exit(EXIT_FAILURE);
     return tmp;
 }
 
-void *ss_realloc(void *ptr, size_t new_size)
+void* ss_realloc(void* ptr, size_t new_size)
 {
-    void *new = realloc(ptr, new_size);
-    if (new == NULL)
-    {
+    void* new = realloc(ptr, new_size);
+    if (new == NULL) {
         free(ptr);
         ptr = NULL;
         exit(EXIT_FAILURE);

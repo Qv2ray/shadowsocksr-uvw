@@ -1,9 +1,9 @@
 #include "qt_ui_log.h"
 
 #include "SSRThread.hpp"
-void qt_ui_log_info(const char *fmt, ...)
+void qt_ui_log_info(const char* fmt, ...)
 {
-    auto ptr = dynamic_cast<SSRThread *>(QThread::currentThread());
+    auto ptr = dynamic_cast<SSRThread*>(QThread::currentThread());
     if (!ptr)
         return;
     QString str;
@@ -15,11 +15,11 @@ void qt_ui_log_info(const char *fmt, ...)
     va_end(args1);
     std::vsnprintf(buf.data(), buf.size(), fmt, args2);
     va_end(args2);
-    emit ptr->onSSRThreadLog(QString{ buf.data() });
+    emit ptr->onSSRThreadLog(QString { buf.data() });
 }
-void qt_ui_log_error(const char *fmt, ...)
+void qt_ui_log_error(const char* fmt, ...)
 {
-    auto ptr = dynamic_cast<SSRThread *>(QThread::currentThread());
+    auto ptr = dynamic_cast<SSRThread*>(QThread::currentThread());
     if (!ptr)
         return;
     QString str;
@@ -31,12 +31,12 @@ void qt_ui_log_error(const char *fmt, ...)
     va_end(args1);
     std::vsnprintf(buf.data(), buf.size(), fmt, args2);
     va_end(args2);
-    emit ptr->onSSRThreadLog(QString{ buf.data() });
+    emit ptr->onSSRThreadLog(QString { buf.data() });
 }
 
 void send_traffic_stat(uint64_t tx, uint64_t rx)
 {
-    auto ptr = dynamic_cast<SSRThread *>(QThread::currentThread());
+    auto ptr = dynamic_cast<SSRThread*>(QThread::currentThread());
     if (!ptr)
         return;
     emit ptr->OnDataReady(tx, rx);
