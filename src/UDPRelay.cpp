@@ -4,8 +4,7 @@
 #include "UDPConnectionContext.hpp"
 #include "ssrutils.h"
 
-#ifdef IP_TOS
-#ifndef _WIN32
+#if defined(IP_TOS) && !defined(_WIN32)
 #define SET_IP_TOS(h)                                                      \
     do {                                                                   \
         uv_os_fd_t fd = h->fileno();                                       \
@@ -19,10 +18,9 @@
             LOGE("setting ipv6 dscp failed: %d", errno);                   \
         }                                                                  \
     } while (0)
-#endif //_WIN32
 #else
 #define SET_IP_TOS(fd)
-#endif //IP_TOS
+#endif //IP_TOS AND NOT _WIN32
 
 namespace
 {
