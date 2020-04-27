@@ -8,7 +8,7 @@ extern "C"
 class CipherEnv;
 class ObfsClass;
 class ConnectionContext;
-class UDPConnectionContext;
+class UDPRelay;
 namespace uvw
 {
 struct DataEvent;
@@ -29,7 +29,7 @@ public:
     char** getBufPtr(); // for compatiable c code.
     char* back();
     char* begin();
-    char* tail();
+    char* end();
     void clear();
     void drop(size_t size);
     void bufRealloc(size_t size);
@@ -41,8 +41,8 @@ public:
     void copy(const Buffer& that);
     void setLength(int l);
     size_t length();
-    void protocolPluginUDPPreEncrypt( UDPConnectionContext& connectionContext);
-    void protocolPluginUDPPostDecrypt( UDPConnectionContext& connectionContext);
+    void protocolPluginUDPPreEncrypt(UDPRelay& connectionContext);
+    void protocolPluginUDPPostDecrypt(UDPRelay& connectionContext);
     void protocolPluginPreEncrypt(ObfsClass& obfsClass, ConnectionContext& connectionContext);
     void protocolPluginPostDecrypt(ObfsClass& obfsClass, ConnectionContext& connectionContext);
     int ssEncrypt(CipherEnv& cipherEnv, ConnectionContext& connectionContext);

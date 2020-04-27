@@ -13,17 +13,21 @@
 #include "Buffer.hpp"
 #include "CipherEnv.hpp"
 #include "ConnectionContext.hpp"
-#include "LogHelper.h"
 #include "ObfsClass.hpp"
-#include "shadowsocks.h"
+#include "UDPRelay.hpp"
+#include "shadowsocksr.h"
 
-class SSRUV
+class TCPRelay
 {
 private:
     static constexpr int SVERSION = 0x05;
     std::shared_ptr<uvw::Loop> loop;
     std::shared_ptr<uvw::TimerHandle> stopTimer;
+#ifdef SSR_UVW_WITH_QT
+    std::shared_ptr<uvw::TimerHandle> statisticsUpdateTimer;
+#endif
     std::shared_ptr<uvw::TCPHandle> tcpServer;
+    std::unique_ptr<UDPRelay> udpRelay;
     bool isStop = false;
     bool verbose = false;
     profile_t profile {};
@@ -40,25 +44,19 @@ private:
 private:
     void stat_update_cb()
     {
-        uv_timeval64_t tv;
-        uv_gettimeofday(&tv);
-        double now = tv.tv_sec + tv.tv_usec * 1e-6;
-        if (now - last > 1) {
 #ifdef SSR_UVW_WITH_QT
-            auto diff_tx = tx - last_tx;
-            auto diff_rx = rx - last_rx;
-            send_traffic_stat(diff_tx, diff_rx);
-            last_tx = tx;
-            last_rx = rx;
+        auto diff_tx = tx - last_tx;
+        auto diff_rx = rx - last_rx;
+        send_traffic_stat(diff_tx, diff_rx);
+        last_tx = tx;
+        last_rx = rx;
 #endif
-            last = now;
-        }
     }
 
 public:
-    static SSRUV& getInstance()
+    static TCPRelay& getInstance()
     {
-        static SSRUV instance;
+        static TCPRelay instance;
         return instance;
     }
 
@@ -117,7 +115,7 @@ private:
 
     void handShakeSendCallBack(uvw::DataEvent& event, uvw::TCPHandle& client)
     {
-        int cmd = 0;
+        int cmd;
         ConnectionContext& connectionContext = *inComingConnections[client.shared_from_this()];
         Buffer& buf = *connectionContext.localBuf;
         if (buf.length() + event.length >= 5) {
@@ -147,7 +145,7 @@ private:
                 }
                 break;
             case 0x03:
-                // todo udp assc
+                udpAsscResponse(client);
                 break;
             case 0x02:
             default:
@@ -159,6 +157,21 @@ private:
             buf.copy(event);
             client.once<uvw::DataEvent>([this](auto& e, auto& h) { handShakeSendCallBack(e, h); });
         }
+    }
+
+    void udpAsscResponse(uvw::TCPHandle& client)
+    {
+        uvw::details::IpTraits<uvw::IPv4>::Type addr;
+        uvw::details::IpTraits<uvw::IPv4>::addrFunc(profile.local_addr,profile.local_port,&addr);
+        constexpr unsigned int response_length = 4+sizeof(addr.sin_addr)+sizeof(addr.sin_port);
+        auto response=std::make_unique<char[]>(response_length);
+        response[0] = 0x05;
+        response[1] = 0x00;
+        response[2] = 0x00;
+        response[3] = 0x01;
+        memcpy(response.get()+4, &addr.sin_addr, sizeof(addr.sin_addr));
+        memcpy(response.get()+4+sizeof(addr.sin_addr), &addr.sin_port, sizeof(addr.sin_port));
+        client.write(std::move(response), response_length);
     }
 
     void panic(const std::shared_ptr<uvw::TCPHandle>& clientConnection)
@@ -216,7 +229,6 @@ private:
             return;
         }
         rx += event.length;
-        stat_update_cb();
         auto& buf = *ctx.localBuf;
         char* base = event.data.get();
         char* guard = base + event.length;
@@ -343,7 +355,7 @@ private:
 public:
     int loopMain(profile_t& p)
     {
-        verbose = true;
+        verbose = p.verbose;
         profile = p;
         isStop = false;
         tx = rx = last_rx = last_tx = 0;
@@ -356,6 +368,13 @@ public:
         obfsClass = std::make_unique<ObfsClass>(profile.protocol, profile.obfs);
         LOGI("initializing ciphers...%s", profile.method);
         cipherEnv = std::make_unique<CipherEnv>(profile.password, profile.method);
+#ifdef SSR_UVW_WITH_QT
+        statisticsUpdateTimer = loop->resource<uvw::TimerHandle>();
+        statisticsUpdateTimer->on<uvw::TimerEvent>([this](auto& e, auto& handle) {
+            stat_update_cb();
+        });
+        statisticsUpdateTimer->start(uvw::TimerHandle::Time { 1000 }, uvw::TimerHandle::Time { 1000 });
+#endif
         stopTimer->on<uvw::TimerEvent>([this](auto&, auto& handle) {
             if (isStop) {
                 handle.stop();
@@ -380,25 +399,31 @@ public:
             LOGE("remote ssr server DNS not resolved");
             return -1; // dns not resolved
         }
+        if (p.mode==1) {
+            udpRelay = std::make_unique<UDPRelay>(loop,*cipherEnv,*obfsClass,profile);
+            udpRelay->initUDPRelay(p.mtu, p.local_addr, p.local_port);
+        }
+
         listen();
         loop->run();
         return 0;
     }
 
 private:
-    SSRUV() = default;
+    TCPRelay() = default;
 };
+
 int start_ssr_uv_local_server(profile_t profile)
 {
-    auto& ssr = SSRUV::getInstance();
+    auto& ssr = TCPRelay::getInstance();
     int res = ssr.loopMain(profile);
     if (res)
         return res;
     return 0;
 }
 
-int stop_ss_local_server()
+int stop_ssr_uv_local_server()
 {
-    SSRUV::stopInstance();
+    TCPRelay::stopInstance();
     return 0;
 }

@@ -52,7 +52,7 @@ if (SSR_UVW_WITH_QT)
             cache.h
             SSRThread.cpp
             ssrutils.c
-            shadowsocks.h
+            shadowsocksr.h
             CipherEnv.hpp
             SSRThread.hpp
             catch2.hpp
@@ -62,7 +62,7 @@ if (SSR_UVW_WITH_QT)
             Buffer.cpp
             cache.c
             ${ssr_thread_moc}
-            local_uv_udp.cpp UDPConnectionContext.cpp UDPConnectionContext.hpp)
+            UDPConnectionContext.cpp UDPConnectionContext.hpp UDPRelay.cpp UDPRelay.hpp)
 else ()
     set(SOURCE_FILES_LOCAL
             ssrutils.h
@@ -94,7 +94,7 @@ else ()
             encrypt.h
             cache.h
             ssrutils.c
-            shadowsocks.h
+            shadowsocksr.h
             CipherEnv.hpp
             catch2.hpp
             sockaddr_universal.c
@@ -102,7 +102,7 @@ else ()
             uthash.h
             Buffer.cpp
             cache.c
-            local_uv_udp.cpp UDPConnectionContext.cpp UDPConnectionContext.hpp)
+            UDPConnectionContext.cpp UDPConnectionContext.hpp UDPRelay.cpp UDPRelay.hpp)
 endif ()
 include_directories(${LibUV_INCLUDE_DIR})
 include_directories(${libsodium_include_dirs})

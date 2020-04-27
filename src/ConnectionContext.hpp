@@ -4,7 +4,7 @@
 extern "C"
 {
 #include "obfs/obfs.h"
-#include "shadowsocks.h"
+#include "shadowsocksr.h"
 }
 #include "CipherEnv.hpp"
 namespace uvw

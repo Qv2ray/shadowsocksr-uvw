@@ -1,8 +1,8 @@
 #include "Buffer.hpp"
 
 #include "ConnectionContext.hpp"
-#include "UDPConnectionContext.hpp"
 #include "ObfsClass.hpp"
+#include "UDPRelay.hpp"
 #include "encrypt.h"
 #include "ssrutils.h"
 #include "uvw_single.hpp"
@@ -56,13 +56,6 @@ char* Buffer::back()
 char* Buffer::begin()
 {
     return buf->array;
-}
-
-char* Buffer::tail()
-{
-    if (buf)
-        return buf->array + buf->capacity;
-    return nullptr;
 }
 
 void Buffer::clear()
@@ -223,22 +216,28 @@ int Buffer::ssDecryptALl(CipherEnv& cipherEnv)
     return err;
 }
 
-void Buffer::protocolPluginUDPPreEncrypt(UDPConnectionContext& connectionContext)
+void Buffer::protocolPluginUDPPreEncrypt(UDPRelay& connectionContext)
 {
     if (connectionContext.protocol_plugin) {
         if (connectionContext.protocol_plugin->client_udp_pre_encrypt) {
-            auto clientUdpPreEncrypt =connectionContext.protocol_plugin->client_udp_pre_encrypt;
-            setLength(clientUdpPreEncrypt(connectionContext.protocolPtr.get(),getBufPtr(),buf->len,&buf->capacity));
+            auto clientUdpPreEncrypt = connectionContext.protocol_plugin->client_udp_pre_encrypt;
+            setLength(clientUdpPreEncrypt(connectionContext.protocolPtr.get(), getBufPtr(), buf->len, &buf->capacity));
         }
     }
 }
 
-void Buffer::protocolPluginUDPPostDecrypt(UDPConnectionContext& connectionContext)
+void Buffer::protocolPluginUDPPostDecrypt(UDPRelay& connectionContext)
 {
     if (connectionContext.protocol_plugin) {
         if (connectionContext.protocol_plugin->client_post_decrypt) {
-            auto clientPostDecrypt =connectionContext.protocol_plugin->client_post_decrypt;
-            setLength(clientPostDecrypt(connectionContext.protocolPtr.get(),getBufPtr(),buf->len,&buf->capacity));
+            auto clientPostDecrypt = connectionContext.protocol_plugin->client_post_decrypt;
+            setLength(clientPostDecrypt(connectionContext.protocolPtr.get(), getBufPtr(), buf->len, &buf->capacity));
         }
     }
+}
+char* Buffer::end()
+{
+    if (buf)
+        return buf->array + buf->capacity;
+    return nullptr;
 }
