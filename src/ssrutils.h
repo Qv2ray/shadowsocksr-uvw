@@ -19,6 +19,9 @@
  * along with shadowsocks-libev; see the file COPYING. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+#ifndef _SSR_UTILS_H
+#define _SSR_UTILS_H
+
 #if SSR_UVW_WITH_QT
 #include "qt_ui_log.h"
 #endif
@@ -36,9 +39,6 @@
 #define USING_CRYPTO MBEDTLS_VERSION_STRING_FULL
 
 #endif
-
-#ifndef _SSR_UTILS_H
-#define _SSR_UTILS_H
 
 #ifdef __cplusplus
 extern "C"
