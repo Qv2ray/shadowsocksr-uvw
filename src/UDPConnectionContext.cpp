@@ -23,7 +23,7 @@ void UDPConnectionContext::initTimer(std::shared_ptr<uvw::Loop>& loop, std::func
         h.stop();
         h.close();
         //before we panic, we must stop and close silently.
-        panic();//destroy this UDPConnectionContext instance.
+        panic(); //destroy this UDPConnectionContext instance.
     });
     timeoutTimer->start(timeout, timeout);
 }

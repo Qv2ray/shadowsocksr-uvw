@@ -162,15 +162,15 @@ private:
     void udpAsscResponse(uvw::TCPHandle& client)
     {
         uvw::details::IpTraits<uvw::IPv4>::Type addr;
-        uvw::details::IpTraits<uvw::IPv4>::addrFunc(profile.local_addr,profile.local_port,&addr);
-        constexpr unsigned int response_length = 4+sizeof(addr.sin_addr)+sizeof(addr.sin_port);
-        auto response=std::make_unique<char[]>(response_length);
+        uvw::details::IpTraits<uvw::IPv4>::addrFunc(profile.local_addr, profile.local_port, &addr);
+        constexpr unsigned int response_length = 4 + sizeof(addr.sin_addr) + sizeof(addr.sin_port);
+        auto response = std::make_unique<char[]>(response_length);
         response[0] = 0x05;
         response[1] = 0x00;
         response[2] = 0x00;
         response[3] = 0x01;
-        memcpy(response.get()+4, &addr.sin_addr, sizeof(addr.sin_addr));
-        memcpy(response.get()+4+sizeof(addr.sin_addr), &addr.sin_port, sizeof(addr.sin_port));
+        memcpy(response.get() + 4, &addr.sin_addr, sizeof(addr.sin_addr));
+        memcpy(response.get() + 4 + sizeof(addr.sin_addr), &addr.sin_port, sizeof(addr.sin_port));
         client.write(std::move(response), response_length);
     }
 
@@ -399,8 +399,8 @@ public:
             LOGE("remote ssr server DNS not resolved");
             return -1; // dns not resolved
         }
-        if (p.mode==1) {
-            udpRelay = std::make_unique<UDPRelay>(loop,*cipherEnv,*obfsClass,profile);
+        if (p.mode == 1) {
+            udpRelay = std::make_unique<UDPRelay>(loop, *cipherEnv, *obfsClass, profile);
             udpRelay->initUDPRelay(p.mtu, p.local_addr, p.local_port);
         }
 

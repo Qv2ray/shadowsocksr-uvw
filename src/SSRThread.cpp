@@ -25,20 +25,19 @@ SSRThread::SSRThread(int localPort,
 }
 
 SSRThread::SSRThread(int localPort,
-                   int remotePort,
-                   int timeout,
-                   int mtu,
-                   SSR_WORK_MODE work_mode,
-                   std::string local_addr,
-                   std::string remote_host,
-                   std::string method,
-                   std::string password,
-                   std::string obfs,
-                   std::string obfs_param,
-                   std::string protocol,
-                   std::string protocol_param,
-    int verbose
-)
+    int remotePort,
+    int timeout,
+    int mtu,
+    SSR_WORK_MODE work_mode,
+    std::string local_addr,
+    std::string remote_host,
+    std::string method,
+    std::string password,
+    std::string obfs,
+    std::string obfs_param,
+    std::string protocol,
+    std::string protocol_param,
+    int verbose)
     : localPort(localPort)
     , remotePort(remotePort)
     , timeout(timeout)
