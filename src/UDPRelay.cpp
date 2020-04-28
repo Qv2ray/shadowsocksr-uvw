@@ -63,6 +63,10 @@ UDPRelay::~UDPRelay()
         free(protocol_global);
         protocol_global = nullptr;
     }
+    if (udpServer) {
+        udpServer->clear();
+        udpServer->close();
+    }
 }
 int UDPRelay::initUDPRelay(int mtu, const char* host, int port)
 {
