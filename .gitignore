@@ -10,3 +10,13 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 build/*
+
+# JB
+/.idea/
+*.iml
+/cmake-build-debug
+
+# gtags
+GPATH
+GRTAGS
+GTAGS

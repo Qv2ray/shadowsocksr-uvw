@@ -13,13 +13,13 @@
 extern "C"
 {
 #endif
-    obfs *http_simple_new_obfs();
-    void http_simple_dispose(obfs *self);
+    obfs* http_simple_new_obfs();
+    void http_simple_dispose(obfs* self);
 
-    int http_simple_client_encode(obfs *self, char **pencryptdata, int datalength, size_t *capacity);
-    int http_simple_client_decode(obfs *self, char **pencryptdata, int datalength, size_t *capacity, int *needsendback);
+    int http_simple_client_encode(obfs* self, char** pencryptdata, int datalength, size_t* capacity);
+    int http_simple_client_decode(obfs* self, char** pencryptdata, int datalength, size_t* capacity, int* needsendback);
 
-    int http_post_client_encode(obfs *self, char **pencryptdata, int datalength, size_t *capacity);
+    int http_post_client_encode(obfs* self, char** pencryptdata, int datalength, size_t* capacity);
 
 #ifdef __cplusplus
 }

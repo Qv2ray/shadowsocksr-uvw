@@ -6,9 +6,9 @@
 
 class CipherEnv
 {
-  public:
-    cipher_env_t cipher{};
-    CipherEnv(const char *passwd, const char *method);
+public:
+    cipher_env_t cipher {};
+    CipherEnv(const char* passwd, const char* method);
     ~CipherEnv();
 };
 

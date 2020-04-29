@@ -4,24 +4,24 @@
 extern "C"
 {
 #include "obfs/obfs.h"
-#include "shadowsocks.h"
+#include "shadowsocksr.h"
 }
 #include "CipherEnv.hpp"
 namespace uvw
 {
-    class TCPHandle;
+class TCPHandle;
 }
 #include "Buffer.hpp"
 
 #include <functional>
 class ConnectionContext
 {
-  private:
-    ObfsClass *obfsClassPtr = nullptr;
-    CipherEnv *cipherEnvPtr = nullptr;
+private:
+    ObfsClass* obfsClassPtr = nullptr;
+    CipherEnv* cipherEnvPtr = nullptr;
 
-  public:
-    using enc_ctx_release_t = std::function<void(struct enc_ctx *)>;
+public:
+    using enc_ctx_release_t = std::function<void(struct enc_ctx*)>;
     std::unique_ptr<Buffer> localBuf;
     std::unique_ptr<Buffer> remoteBuf;
     std::unique_ptr<obfs, decltype(obfs_class::dispose)> protocolPtr;
@@ -31,17 +31,17 @@ class ConnectionContext
     std::shared_ptr<uvw::TCPHandle> client;
     std::shared_ptr<uvw::TCPHandle> remote;
 
-    ConnectionContext(std::shared_ptr<uvw::TCPHandle> tcpHandle, ObfsClass *obfsClassPtr, CipherEnv *cipherEnvPtr);
+    ConnectionContext(std::shared_ptr<uvw::TCPHandle> tcpHandle, ObfsClass* obfsClassPtr, CipherEnv* cipherEnvPtr);
 
     ConnectionContext();
 
-    ConnectionContext(ConnectionContext &&) noexcept;
+    ConnectionContext(ConnectionContext&&) noexcept;
 
-    ConnectionContext &operator=(ConnectionContext &&) noexcept;
+    ConnectionContext& operator=(ConnectionContext&&) noexcept;
 
     void setRemoteTcpHandle(std::shared_ptr<uvw::TCPHandle> tcp);
 
-    server_info_t construct_obfs(CipherEnv &cipherEnv, ObfsClass &obfsClass, const profile_t &profile, int server_info_head_len);
+    server_info_t construct_obfs(CipherEnv& cipherEnv, ObfsClass& obfsClass, const profile_t& profile, int server_info_head_len);
 
     ~ConnectionContext();
 };

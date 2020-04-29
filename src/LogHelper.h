@@ -3,8 +3,9 @@
 #include "ssrutils.h"
 struct LogHelper
 {
-    const char *p_;
-    LogHelper(const char *p) : p_(p)
+    const char* p_;
+    LogHelper(const char* p)
+        : p_(p)
     {
         LOGI("enter %s", p);
     }

@@ -2970,7 +2970,7 @@ namespace uvw
          */
         std::pair<bool, std::unique_ptr<addrinfo, Deleter>> addrInfoSync(std::string node, std::string service, addrinfo *hints = nullptr)
         {
-            return nodeAddrInfoSync(node.data(), service.data(), hints);
+            return nodeAddrInfoSync(node.data(), service.empty()? nullptr : service.data(), hints);
         }
     };
 
@@ -7959,12 +7959,12 @@ namespace uvw
      */
     struct UDPDataEvent
     {
-        explicit UDPDataEvent(Addr sndr, std::unique_ptr<const char[]> buf, std::size_t len, bool part) noexcept
+        explicit UDPDataEvent(Addr sndr, std::unique_ptr<char[]> buf, std::size_t len, bool part) noexcept
             : data{ std::move(buf) }, length{ len }, sender{ std::move(sndr) }, partial{ part }
         {
         }
 
-        std::unique_ptr<const char[]> data; /*!< A bunch of data read on the stream. */
+        std::unique_ptr<char[]> data; /*!< A bunch of data read on the stream. */
         std::size_t length;                 /*!< The amount of data read on the stream. */
         Addr sender;                        /*!< A valid instance of Addr. */
         bool partial;                       /*!< True if the message was truncated, false otherwise. */
@@ -8032,7 +8032,7 @@ namespace uvw
 
             UDPHandle &udp = *(static_cast<UDPHandle *>(handle->data));
             // data will be destroyed no matter of what the value of nread is
-            std::unique_ptr<const char[]> data{ buf->base };
+            std::unique_ptr<char[]> data{ buf->base };
 
             if (nread > 0)
             {
