@@ -75,8 +75,8 @@ int UDPRelay::initUDPRelay(int mtu, const char* host, int port)
         buf_size = packet_size * 2;
     }
     udpServer = loop->resource<uvw::UDPHandle>();
-    SET_IP_TOS(udpServer);
     udpServer->bind(host, port, uvw::Flags<uvw::UDPHandle::Bind>::from<uvw::UDPHandle::Bind::REUSEADDR>());
+    SET_IP_TOS(udpServer);
     udpServer->on<uvw::UDPDataEvent>([this](auto& e, auto& h) {
         localBuf = std::make_unique<Buffer>();
         serverRecv(e, h);
@@ -156,8 +156,8 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
     std::shared_ptr<UDPConnectionContext> remoteCtx;
     if (socketCache.find(data.sender) == socketCache.end()) {
         auto remoteSocket = loop->resource<uvw::UDPHandle>();
-        SET_IP_TOS(remoteSocket);
         remoteSocket->bind(remoteAddr);
+        SET_IP_TOS(remoteSocket);
         remoteCtx = std::make_shared<UDPConnectionContext>(data.sender, remoteSocket);
         remoteCtx->initTimer(
             loop, [this, addr = data.sender]() { panic(addr); }, uvw::TimerHandle::Time { timeout });
