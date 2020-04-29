@@ -43,6 +43,17 @@ int use_syslog = 0;
 
 int use_tty = 1;
 
+struct tm* ssr_safe_localtime(time_t* t, struct tm* tp)
+{
+#ifdef _WIN32
+    //windows localtime is thread safe
+    //https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/localtime-localtime32-localtime64?view=vs-2019
+    return localtime(t);
+#else
+    return localtime_r(t, tp);
+#endif
+}
+
 char* ss_itoa(int i)
 {
     /* Room for INT_DIGITS digits, - and '\0' */
