@@ -230,7 +230,7 @@ void Buffer::protocolPluginUDPPostDecrypt(UDPRelay& connectionContext)
 {
     if (connectionContext.protocol_plugin) {
         if (connectionContext.protocol_plugin->client_post_decrypt) {
-            auto clientPostDecrypt = connectionContext.protocol_plugin->client_post_decrypt;
+            auto clientPostDecrypt = connectionContext.protocol_plugin->client_udp_post_decrypt;
             setLength(clientPostDecrypt(connectionContext.protocolPtr.get(), getBufPtr(), buf->len, &buf->capacity));
         }
     }

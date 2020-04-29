@@ -54,7 +54,7 @@ public:
 
     ~UDPRelay();
 
-    int initUDPRelay(int mtu, const char* host, int port);
+    int initUDPRelay(int mtu, const char* host, int port, sockaddr remote_addr);
 
 private:
     CipherEnv* cipherEnvPtr;

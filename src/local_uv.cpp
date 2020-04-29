@@ -401,7 +401,7 @@ public:
         }
         if (p.mode == 1) {
             udpRelay = std::make_unique<UDPRelay>(loop, *cipherEnv, *obfsClass, profile);
-            udpRelay->initUDPRelay(p.mtu, p.local_addr, p.local_port);
+            udpRelay->initUDPRelay(p.mtu, p.local_addr, p.local_port, remoteAddr);
         }
 
         listen();

@@ -68,13 +68,17 @@ UDPRelay::~UDPRelay()
         udpServer->close();
     }
 }
-int UDPRelay::initUDPRelay(int mtu, const char* host, int port)
+int UDPRelay::initUDPRelay(int mtu, const char* host, int port, sockaddr remote_addr)
 {
+    remoteAddr = remote_addr;
     if (mtu > 0) {
         packet_size = mtu - PACKET_HEADER_SIZE;
         buf_size = packet_size * 2;
     }
     udpServer = loop->resource<uvw::UDPHandle>();
+    udpServer->on<uvw::ErrorEvent>([this](auto& e, auto& h) {
+        LOGE("[udp]local error %s", e.what());
+    });
     udpServer->bind(host, port, uvw::Flags<uvw::UDPHandle::Bind>::from<uvw::UDPHandle::Bind::REUSEADDR>());
     SET_IP_TOS(udpServer);
     udpServer->on<uvw::UDPDataEvent>([this](auto& e, auto& h) {
@@ -139,6 +143,7 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
     addr_header_len = parseUDPRelayHeader(data.data.get() + offset,
         data.length - offset, host, port, &dst_addr);
     if (addr_header_len == 0) {
+        LOGE("[udp] panic:parse header error");
         panic(data.sender);
         return;
     }
@@ -156,7 +161,17 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
     std::shared_ptr<UDPConnectionContext> remoteCtx;
     if (socketCache.find(data.sender) == socketCache.end()) {
         auto remoteSocket = loop->resource<uvw::UDPHandle>();
-        remoteSocket->bind(remoteAddr);
+        remoteSocket->on<uvw::ErrorEvent>([this](auto& e, auto& h) {
+            LOGE("[udp]remote error %s", e.what());
+        });
+        struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(struct sockaddr_in));
+        addr.sin_family = AF_INET;
+        addr.sin_addr.s_addr = INADDR_ANY;
+        addr.sin_port = 0;
+
+        remoteSocket->bind(reinterpret_cast<const sockaddr&>(addr));
+        LOGI("[udp]:bind remote socket");
         SET_IP_TOS(remoteSocket);
         remoteCtx = std::make_shared<UDPConnectionContext>(data.sender, remoteSocket);
         remoteCtx->initTimer(
@@ -206,9 +221,11 @@ void UDPRelay::remoteRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle, const
         return;
     }
     ctx->remoteBuf->protocolPluginUDPPostDecrypt(*this);
-    if (static_cast<int>(ctx->remoteBuf->length())) {
-        LOGE("client_udp_post_decrypt");
+    if (static_cast<int>(ctx->remoteBuf->length()) < 0) {
+        LOGE("[udp]client_udp_post_decrypt");
         panic(localSrcAddr);
+        return;
+    } else if (ctx->remoteBuf->length() == 0) {
         return;
     }
     int len = parseUDPRelayHeader(*ctx->remoteBuf->getBufPtr(), ctx->remoteBuf->length(), NULL, NULL, NULL);
@@ -225,7 +242,7 @@ void UDPRelay::remoteRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle, const
         return;
     }
     ctx->resetTimeoutTimer();
-    ctx->remote->send(ctx->srcAddr, std::move(response), ctx->remoteBuf->length() + 3);
+    udpServer->send(ctx->srcAddr, std::move(response), ctx->remoteBuf->length() + 3);
     ctx->remoteBuf->setLength(0);
 }
 int UDPRelay::parseUDPRelayHeader(const char* buf, size_t buf_len, char* host, char* port, struct sockaddr_storage* storage)
