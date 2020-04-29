@@ -375,12 +375,15 @@ public:
         });
         statisticsUpdateTimer->start(uvw::TimerHandle::Time { 1000 }, uvw::TimerHandle::Time { 1000 });
 #endif
-        stopTimer->on<uvw::TimerEvent>([this](auto&, auto& handle) {
+        stopTimer->on<uvw::TimerEvent>([this, ssr_work_mode = p.mode](auto&, auto& handle) {
             if (isStop) {
                 handle.stop();
                 handle.close();
                 tcpServer->close();
                 inComingConnections.clear();
+                if (ssr_work_mode == 1) {
+                    udpRelay.reset(nullptr);
+                }
                 loop->clear();
                 loop->close();
                 obfsClass.reset(nullptr);
