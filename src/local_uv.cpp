@@ -16,6 +16,7 @@
 #include "ObfsClass.hpp"
 #include "UDPRelay.hpp"
 #include "shadowsocksr.h"
+#include <cstdint>
 
 class TCPRelay
 {
@@ -94,7 +95,7 @@ private:
             return 19;
         case 3:
             ++buf_atyp_ptr;
-            return 4 + (*buf_atyp_ptr);
+            return 4 + static_cast<uint8_t>(*buf_atyp_ptr);
         }
         return 30; // can't reach here.
     }
