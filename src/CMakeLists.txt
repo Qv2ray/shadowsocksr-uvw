@@ -58,6 +58,7 @@ if (SSR_UVW_WITH_QT)
     set(SOURCE_FILES_LOCAL_QT
             ${ssr_thread_moc}
             SSRThread.cpp
+            qt_ui_log.cpp
             ${SOURCE_FILES_LOCAL})
     add_library(${PROJECT_NAME}-qt STATIC ${SOURCE_FILES_LOCAL_QT})
     target_compile_definitions(${PROJECT_NAME}-qt PUBLIC -DSSR_UVW_WITH_QT)
