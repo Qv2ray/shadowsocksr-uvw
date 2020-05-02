@@ -122,9 +122,11 @@ server_info_t ConnectionContext::construct_obfs(CipherEnv& cipherEnv, ObfsClass&
 ConnectionContext::~ConnectionContext()
 {
     if (remote) {
+        remote->clear();
         remote->close();
     }
     if (client) {
+        client->clear();
         client->close();
     }
 }

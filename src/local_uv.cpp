@@ -180,14 +180,7 @@ private:
         if (verbose)
             LOGI("panic close client connection");
         if (inComingConnections.find(clientConnection) != inComingConnections.end()) {
-            auto ctxPtr = inComingConnections[clientConnection];
             inComingConnections.erase(clientConnection);
-            ctxPtr->client->clear();
-            ctxPtr->client->close();
-            if (ctxPtr->remote) {
-                ctxPtr->remote->clear();
-                ctxPtr->remote->close();
-            }
         }
     }
     int insertSSRHeader(ConnectionContext& ctx, Buffer& buf)
