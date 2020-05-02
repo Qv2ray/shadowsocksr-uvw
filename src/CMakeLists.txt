@@ -44,7 +44,6 @@ set(SOURCE_FILES_LOCAL
         ssrutils.c
         shadowsocksr.h
         CipherEnv.hpp
-        catch2.hpp
         sockaddr_universal.c
         CipherEnv.cpp
         uthash.h
@@ -91,6 +90,11 @@ if (SSR_UVW_WITH_QT)
             ${COMMON_LINK_LIBS} ${ssr_crypto}
             )
 endif ()
+target_include_directories(
+        ${PROJECT_NAME}
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+ )
 
 target_link_libraries(${PROJECT_NAME}
         ${ssr_crypto} ${COMMON_LINK_LIBS}

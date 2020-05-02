@@ -20,3 +20,6 @@ build/*
 GPATH
 GRTAGS
 GTAGS
+
+#vscode 
+/.vscode/
