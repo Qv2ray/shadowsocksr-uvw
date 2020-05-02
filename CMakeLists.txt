@@ -70,3 +70,7 @@ configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINA
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 add_subdirectory(src)
+if (BUILD_TESTING)
+   message("build ssr uvw testing")
+   add_subdirectory(test)
+endif ()
