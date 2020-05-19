@@ -3,8 +3,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-
-TEST_CASE("Dual-Stack","[tcp]")
+TEST_CASE("Dual-Stack", "[tcp]")
 {
     auto loop = uvw::Loop::create();
     auto tcpServer = loop->resource<uvw::TCPHandle>();
@@ -15,23 +14,23 @@ TEST_CASE("Dual-Stack","[tcp]")
     auto client1 = loop->resource<uvw::TCPHandle>();
     auto client2 = loop->resource<uvw::TCPHandle>();
     int client_count = 0;
-    tcpServer->on<uvw::ListenEvent>([&client_count](const uvw::ListenEvent &, uvw::TCPHandle &handle) {
+    tcpServer->on<uvw::ListenEvent>([&client_count](const uvw::ListenEvent&, uvw::TCPHandle& handle) {
         std::shared_ptr<uvw::TCPHandle> socket = handle.loop().resource<uvw::TCPHandle>();
 
-        socket->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TCPHandle &) { FAIL(); });
-        socket->on<uvw::CloseEvent>([&handle](const uvw::CloseEvent &, uvw::TCPHandle &) { handle.close(); });
-        socket->on<uvw::EndEvent>([](const uvw::EndEvent &, uvw::TCPHandle &sock) { sock.close(); });
+        socket->on<uvw::ErrorEvent>([](const uvw::ErrorEvent&, uvw::TCPHandle&) { FAIL(); });
+        socket->on<uvw::CloseEvent>([&handle](const uvw::CloseEvent&, uvw::TCPHandle&) { handle.close(); });
+        socket->on<uvw::EndEvent>([](const uvw::EndEvent&, uvw::TCPHandle& sock) { sock.close(); });
 
         handle.accept(*socket);
         socket->read();
         client_count += 1;
-        std::cout<<"peer:"<<socket->peer().ip<<std::endl;
+        std::cout << "peer:" << socket->peer().ip << std::endl;
     });
 
-    client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle &handle) {
+    client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {
         handle.close();
     });
-    client2->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle &handle) {
+    client2->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {
         handle.close();
     });
     tcpServer->bind(reinterpret_cast<sockaddr&>(sin6));
@@ -39,11 +38,10 @@ TEST_CASE("Dual-Stack","[tcp]")
     client1->connect("127.0.0.1", 10000);
     client2->connect<uvw::IPv6>("::1", 10000);
     loop->run();
-    REQUIRE(client_count==2);
+    REQUIRE(client_count == 2);
 }
 
-
-TEST_CASE("Single-Stack","[tcp]")
+TEST_CASE("Single-Stack", "[tcp]")
 {
     auto loop = uvw::Loop::create();
     auto tcpServer = loop->resource<uvw::TCPHandle>();
@@ -54,23 +52,23 @@ TEST_CASE("Single-Stack","[tcp]")
     auto client1 = loop->resource<uvw::TCPHandle>();
     auto client2 = loop->resource<uvw::TCPHandle>();
     int client_count = 0;
-    tcpServer->on<uvw::ListenEvent>([&client_count](const uvw::ListenEvent &, uvw::TCPHandle &handle) {
+    tcpServer->on<uvw::ListenEvent>([&client_count](const uvw::ListenEvent&, uvw::TCPHandle& handle) {
         std::shared_ptr<uvw::TCPHandle> socket = handle.loop().resource<uvw::TCPHandle>();
 
-        socket->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TCPHandle &) { FAIL(); });
-        socket->on<uvw::CloseEvent>([&handle](const uvw::CloseEvent &, uvw::TCPHandle &) { handle.close(); });
-        socket->on<uvw::EndEvent>([](const uvw::EndEvent &, uvw::TCPHandle &sock) { sock.close(); });
+        socket->on<uvw::ErrorEvent>([](const uvw::ErrorEvent&, uvw::TCPHandle&) { FAIL(); });
+        socket->on<uvw::CloseEvent>([&handle](const uvw::CloseEvent&, uvw::TCPHandle&) { handle.close(); });
+        socket->on<uvw::EndEvent>([](const uvw::EndEvent&, uvw::TCPHandle& sock) { sock.close(); });
 
         handle.accept(*socket);
         socket->read();
         client_count += 1;
-        std::cout<<"peer:"<<socket->peer().ip<<std::endl;
+        std::cout << "peer:" << socket->peer().ip << std::endl;
     });
 
-    client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle &handle) {
+    client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {
         handle.close();
     });
-    client2->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle &handle) {
+    client2->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {
         handle.close();
     });
     tcpServer->bind(reinterpret_cast<sockaddr&>(sin6));
@@ -78,5 +76,5 @@ TEST_CASE("Single-Stack","[tcp]")
     client1->connect("127.0.0.1", 10000);
     client2->connect<uvw::IPv6>("::1", 10000);
     loop->run();
-    REQUIRE(client_count==1);
+    REQUIRE(client_count == 1);
 }
