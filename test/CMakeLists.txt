@@ -24,3 +24,4 @@ function(ADD_SSR_UVW_TEST TEST_NAME TEST_SOURCE)
 endfunction()
 
 ADD_SSR_UVW_TEST(TESTBUFFER src/TestBuffer.cpp)
+ADD_SSR_UVW_TEST(TESTDUALSTACK src/TestDualStack.cpp)
