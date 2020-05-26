@@ -232,6 +232,11 @@ private:
             size_t len = remain > Buffer::BUF_DEFAULT_CAPACITY ? Buffer::BUF_DEFAULT_CAPACITY : remain;
             buf.copyFromBegin(iter, len);
             int needsendback = buf.clientDecode(*obfsClass, ctx);
+            if (static_cast<int>(buf.length()) < 0) {
+                panic(ctx.client);
+                return;
+            }
+
             if (needsendback) {
                 ctx.remoteBuf->clientEncode(*obfsClass, ctx, 0);
                 remote.once<uvw::WriteEvent>([&ctx](auto&, auto&) { ctx.remoteBuf->clear(); });
