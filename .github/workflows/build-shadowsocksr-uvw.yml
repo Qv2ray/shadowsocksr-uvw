@@ -125,3 +125,32 @@ jobs:
           cd build
           cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release 
           cmake --build . --parallel $(nproc)
+
+      - name: Win-${{ matrix.arch }}  - Create 7z Release
+        if: matrix.platform == 'windows-latest'
+        uses: DuckSoft/create-7z-action@v1.0
+        with:
+            pathSource: ./build/src/ssr-local.exe
+            pathTarget: ./release.7z
+
+      - name: Unix-${{ matrix.arch }}  - Create 7z Release
+        if: matrix.platform != 'windows-latest'
+        uses: DuckSoft/create-7z-action@v1.0
+        with:
+            pathSource: ./build/src/ssr-local
+            pathTarget: ./release.7z
+
+      - name: Uploading artifact ${{ matrix.platform }}
+        uses: actions/upload-artifact@master
+        with:
+            name: ssr-local-${{ matrix.platform }}-${{ matrix.arch }}.7z
+            path: release.7z
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: release.7z
+            asset_name: srr-local-${{ matrix.platform}}-${{ matrix.arch }}.7z
+            tag: release
+            overwrite: true

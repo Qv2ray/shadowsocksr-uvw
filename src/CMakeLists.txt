@@ -132,7 +132,10 @@ target_link_libraries(${PROJECT_NAME}
         ${ssr_crypto} ${COMMON_LINK_LIBS}
         )
 if(NOT WIN32)
-    add_executable(ssr-local ${SOURCE_FILES_LOCAL} ssr_local.cpp)
+    set(SSR_LOCAL_SOURCE ssr_local.cpp)
+else()
+    set(SSR_LOCAL_SOURCE ssr_local.cpp win/getopt.c)
+endif()
+add_executable(ssr-local ${SOURCE_FILES_LOCAL} ${SSR_LOCAL_SOURCE})
     target_compile_definitions(ssr-local PUBLIC UVW_AS_LIB)
     target_link_libraries(ssr-local shadowsocksr::uvw)
-endif()

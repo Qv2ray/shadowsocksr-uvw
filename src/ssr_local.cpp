@@ -1,4 +1,8 @@
+#if !defined(_WIN32)
 #include "getopt.h"
+#else
+#include "win/getopt.h"
+#endif
 #include "shadowsocksr.h"
 #include "signal.h"
 #include "ssrutils.h"
