@@ -24,7 +24,7 @@ if(WIN32)
         endif()
     endif()
 endif()
-
+include(CTest)
 set(WITH_CRYPTO_LIBRARY "openssl" CACHE STRING "build with the given crypto library, TYPE=openssl|polarssl|mbedtls default=openssl")
 set(SSR_UVW_WITH_QT 1 CACHE BOOL "build with qt")
 option(USE_SYSTEM_SODIUM "use system sodium" OFF)

@@ -32,6 +32,7 @@ public:
         std::string obfs_param,
         std::string protocol,
         std::string protocol_param,
+        int ipv6first = 0,
         int verbose = 0);
     ~SSRThread() override;
 signals:
@@ -58,6 +59,7 @@ private:
     std::string obfs_param;
     std::string protocol;
     std::string protocol_param;
+    int ipv6first = 0;
     int verbose = 0;
     QString inboundTag;
 };

@@ -28,6 +28,7 @@ extern "C"
         // mode 1 is TCP_AND_UDP
         int mtu; // MTU of interface
         int verbose; // verbose mode
+        int ipv6first;
     } profile_t;
 
     int start_ssr_uv_local_server(profile_t profile);

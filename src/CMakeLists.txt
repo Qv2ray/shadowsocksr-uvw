@@ -49,6 +49,8 @@ set(SOURCE_FILES_LOCAL
         uthash.h
         Buffer.cpp
         cache.c
+        NetUtils.hpp
+        NetUtils.cpp
         UDPConnectionContext.cpp UDPConnectionContext.hpp UDPRelay.cpp UDPRelay.hpp)
 if (SSR_UVW_WITH_QT)
     message("find Qt5")

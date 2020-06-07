@@ -37,6 +37,7 @@ SSRThread::SSRThread(int localPort,
     std::string obfs_param,
     std::string protocol,
     std::string protocol_param,
+    int ipv6first,
     int verbose)
     : localPort(localPort)
     , remotePort(remotePort)
@@ -51,6 +52,7 @@ SSRThread::SSRThread(int localPort,
     , obfs_param(std::move(obfs_param))
     , protocol(std::move(protocol))
     , protocol_param(std::move(protocol_param))
+    , ipv6first(ipv6first)
     , verbose(verbose)
 {
 }
@@ -79,6 +81,7 @@ void SSRThread::run()
     profile.acl = nullptr;
     profile.fast_open = 1; // libuv is not supported fastopen yet.
     profile.verbose = verbose;
+    profile.ipv6first = ipv6first;
     start_ssr_uv_local_server(profile);
 }
 
