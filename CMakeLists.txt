@@ -9,7 +9,6 @@
 cmake_minimum_required(VERSION 3.2)
 set(PROJECT_NAME shadowsocksr-uvw)
 project(${PROJECT_NAME})
-
 set(VERSION 0.0.1)
 # Detect linux
 if (UNIX AND NOT APPLE)
@@ -24,6 +23,7 @@ if(WIN32)
         endif()
     endif()
 endif()
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 include(CTest)
 set(WITH_CRYPTO_LIBRARY "openssl" CACHE STRING "build with the given crypto library, TYPE=openssl|polarssl|mbedtls default=openssl")
 set(SSR_UVW_WITH_QT 1 CACHE BOOL "build with qt")

@@ -1,5 +1,5 @@
 #if !defined(_WIN32)
-#include "getopt.h"
+#include <getopt.h>
 #else
 #include "win/getopt.h"
 #endif
