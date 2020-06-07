@@ -24,7 +24,7 @@ TEST_CASE("Dual-Stack", "[tcp]")
         handle.accept(*socket);
         socket->read();
         client_count += 1;
-        std::cout << "peer:" << socket->peer().ip << std::endl;
+        std::cout << "peer:" << socket->peer<uvw::IPv6>().ip << std::endl;
     });
 
     client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {
@@ -62,7 +62,7 @@ TEST_CASE("Single-Stack", "[tcp]")
         handle.accept(*socket);
         socket->read();
         client_count += 1;
-        std::cout << "peer:" << socket->peer().ip << std::endl;
+        std::cout << "peer:" << socket->peer<uvw::IPv6>().ip << std::endl;
     });
 
     client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {

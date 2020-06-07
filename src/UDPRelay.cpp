@@ -68,7 +68,7 @@ UDPRelay::~UDPRelay()
         udpServer->close();
     }
 }
-int UDPRelay::initUDPRelay(int mtu, const char* host, int port, sockaddr remote_addr)
+int UDPRelay::initUDPRelay(int mtu, const char* host, int port, struct sockaddr_storage remote_addr)
 {
     remoteAddr = remote_addr;
     if (mtu > 0) {
@@ -199,7 +199,7 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
         panic(data.sender);
         return;
     }
-    remoteCtx->remote->send(remoteAddr, localBuf->duplicateDataToArray(), localBuf->length());
+    remoteCtx->remote->send(reinterpret_cast<const sockaddr&>(remoteAddr), localBuf->duplicateDataToArray(), localBuf->length());
     localBuf->setLength(0);
 }
 void UDPRelay::panic(const uvw::Addr& addr)

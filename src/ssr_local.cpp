@@ -1,8 +1,7 @@
 #include "getopt.h"
 #include "shadowsocksr.h"
-#include "ssrutils.h"
 #include "signal.h"
-
+#include "ssrutils.h"
 
 static void usage()
 {
@@ -17,6 +16,8 @@ static void usage()
         "       -s <server_host>           Host name or IP address of your remote server.\n");
     printf(
         "       -p <server_port>           Port number of your remote server.\n");
+    printf(
+        "       [-6]                       Resovle hostname to IPv6 address first.\n");
     printf(
         "       -b <local_address>         Local address to bind.\n");
     printf(
@@ -150,6 +151,9 @@ int main(int argc, char** argv)
         case 'g':
             p.obfs_param = optarg;
             break;
+        case '6':
+            p.ipv6first = 1;
+            break;
         case 'b':
             p.local_addr = optarg;
             break;
@@ -169,15 +173,14 @@ int main(int argc, char** argv)
             break;
         }
     }
-    if (p.local_port==0 || p.remote_port == 0)
-    {
+    if (p.local_port == 0 || p.remote_port == 0) {
         opterr = 1;
     }
     if (opterr) {
         usage();
         exit(EXIT_FAILURE);
     }
-    signal(SIGINT,sigintHandler);
+    signal(SIGINT, sigintHandler);
     start_ssr_uv_local_server(p);
     return 0;
 }

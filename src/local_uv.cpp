@@ -13,6 +13,7 @@
 #include "Buffer.hpp"
 #include "CipherEnv.hpp"
 #include "ConnectionContext.hpp"
+#include "NetUtils.hpp"
 #include "ObfsClass.hpp"
 #include "UDPRelay.hpp"
 #include "shadowsocksr.h"
@@ -38,7 +39,9 @@ private:
     std::unique_ptr<CipherEnv> cipherEnv;
     uint64_t tx = 0, rx = 0;
     uint64_t last_tx = 0, last_rx = 0;
-    sockaddr remoteAddr {};
+    struct sockaddr_storage remoteAddr
+    {
+    };
     std::unordered_map<std::shared_ptr<uvw::TCPHandle>, std::shared_ptr<ConnectionContext>> inComingConnections;
     double last {};
 
@@ -264,7 +267,7 @@ private:
         auto remote = ctx.remote;
         if (!remote)
             return;
-        remote->connect(remoteAddr);
+        remote->connect(reinterpret_cast<const sockaddr&>(remoteAddr));
         remote->on<uvw::DataEvent>([&ctx, this](uvw::DataEvent& event, uvw::TCPHandle& remoteHandle) { remoteRecv(ctx, event, remoteHandle); });
         remote->once<uvw::ConnectEvent>([&ctx, this](const uvw::ConnectEvent&, uvw::TCPHandle& h) {
             h.read();
@@ -386,16 +389,8 @@ public:
             }
         });
         stopTimer->start(uvw::TimerHandle::Time { 500 }, uvw::TimerHandle::Time { 500 });
-        auto getAddrInfoReq = loop->resource<uvw::GetAddrInfoReq>();
-        char digitBuffer[20] = { 0 };
-        sprintf(digitBuffer, "%d", profile.remote_port);
-        auto dns_res = getAddrInfoReq->addrInfoSync(profile.remote_host, digitBuffer);
-        if (dns_res.first) {
-            remoteAddr = *dns_res.second->ai_addr;
-        } else {
-            LOGE("remote ssr server DNS not resolved");
-            return -1; // dns not resolved
-        }
+        if (ssr_get_sock_addr(loop, profile.remote_host, profile.remote_port, reinterpret_cast<struct sockaddr_storage*>(&remoteAddr), p.ipv6first) != 0)
+            return -1;
         if (p.mode == 1) {
             udpRelay = std::make_unique<UDPRelay>(loop, *cipherEnv, *obfsClass, profile);
             udpRelay->initUDPRelay(p.mtu, p.local_addr, p.local_port, remoteAddr);

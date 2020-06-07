@@ -54,7 +54,7 @@ public:
 
     ~UDPRelay();
 
-    int initUDPRelay(int mtu, const char* host, int port, sockaddr remote_addr);
+    int initUDPRelay(int mtu, const char* host, int port, struct sockaddr_storage remote_addr);
 
 private:
     CipherEnv* cipherEnvPtr;
@@ -75,7 +75,9 @@ private:
     std::unordered_map<uvw::Addr, std::shared_ptr<UDPConnectionContext>, SockaddrHasher, SockAddrEqual> socketCache;
     int packet_size { DEFAULT_PACKET_SIZE };
     int buf_size { DEFAULT_PACKET_SIZE * 2 };
-    sockaddr remoteAddr {};
+    struct sockaddr_storage remoteAddr
+    {
+    };
 };
 
 #endif //SHADOWSOCKSR_UVW_UDPRELAY_HPP
