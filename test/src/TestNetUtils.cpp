@@ -1,5 +1,5 @@
 #include "NetUtils.hpp"
-#include "uvw_single.hpp"
+#include "uvw/loop.h"
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include <cstring>

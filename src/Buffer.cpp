@@ -5,7 +5,7 @@
 #include "UDPRelay.hpp"
 #include "encrypt.h"
 #include "ssrutils.h"
-#include "uvw_single.hpp"
+#include "uvw/stream.h"
 
 #include <algorithm>
 namespace

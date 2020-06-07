@@ -1,6 +1,9 @@
 #include "sockaddr_universal.h"
 #include "ssrutils.h"
-#include "uvw_single.hpp"
+#include "uvw/loop.h"
+#include "uvw/stream.h"
+#include "uvw/timer.h"
+#include "uvw/tcp.h"
 
 #include <memory>
 #include <unordered_map>

@@ -3,7 +3,7 @@
 #include "Buffer.hpp"
 #include "LogHelper.h"
 #include "ObfsClass.hpp"
-#include "uvw_single.hpp"
+#include "uvw/tcp.h"
 namespace
 {
 void dummyDisposeObfs(obfs*)

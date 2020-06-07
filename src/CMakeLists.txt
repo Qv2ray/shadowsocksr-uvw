@@ -11,6 +11,34 @@ endif ()
 
 
 set(USE_CRYPTO_OPENSSL 1)
+set(UVW_SOURCE
+    uvw/async.cpp
+    uvw/check.cpp
+    uvw/dns.cpp
+    uvw/emitter.cpp
+    uvw/fs.cpp
+    uvw/fs_event.cpp
+    uvw/fs_poll.cpp
+    uvw/idle.cpp
+    uvw/lib.cpp
+    uvw/loop.cpp
+    uvw/pipe.cpp
+    uvw/poll.cpp
+    uvw/prepare.cpp
+    uvw/process.cpp
+    uvw/signal.cpp
+    uvw/stream.cpp
+    uvw/tcp.cpp
+    uvw/thread.cpp
+    uvw/timer.cpp
+    uvw/tty.cpp
+    uvw/util.cpp
+    uvw/work.cpp
+    uvw/udp.cpp
+    )
+add_library(UVW_LIB STATIC ${UVW_SOURCE})
+target_link_libraries(UVW_LIB ${LibUV_LIBRARIES})
+target_compile_definitions(UVW_LIB PUBLIC UVW_AS_LIB)
 
 set(SOURCE_FILES_LOCAL
         ssrutils.h
@@ -62,7 +90,7 @@ if (SSR_UVW_WITH_QT)
             qt_ui_log.cpp
             ${SOURCE_FILES_LOCAL})
     add_library(${PROJECT_NAME}-qt STATIC ${SOURCE_FILES_LOCAL_QT})
-    target_compile_definitions(${PROJECT_NAME}-qt PUBLIC -DSSR_UVW_WITH_QT)
+    target_compile_definitions(${PROJECT_NAME}-qt PUBLIC SSR_UVW_WITH_QT UVW_AS_LIB)
     set_target_properties(${PROJECT_NAME}-qt PROPERTIES POSITION_INDEPENDENT_CODE 1)
     add_library(shadowsocksr::uvw::qt ALIAS ${PROJECT_NAME}-qt)
 endif ()
@@ -73,12 +101,14 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES_LOCAL})
 add_library(shadowsocksr::uvw ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE 1)
+target_compile_definitions(${PROJECT_NAME} PUBLIC UVW_AS_LIB)
 set(
         COMMON_LINK_LIBS
         ${LIBRT}
         ${LibUV_LIBRARIES}
         ${WINSOCK2}
         ${CRYPT32}
+        UVW_LIB
 )
 
 set(ssr_crypto
@@ -103,5 +133,6 @@ target_link_libraries(${PROJECT_NAME}
         )
 if(NOT WIN32)
     add_executable(ssr-local ${SOURCE_FILES_LOCAL} ssr_local.cpp)
+    target_compile_definitions(ssr-local PUBLIC UVW_AS_LIB)
     target_link_libraries(ssr-local shadowsocksr::uvw)
 endif()

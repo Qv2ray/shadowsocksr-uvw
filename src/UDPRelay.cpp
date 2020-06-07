@@ -4,6 +4,7 @@
 #include "NetUtils.hpp"
 #include "UDPConnectionContext.hpp"
 #include "ssrutils.h"
+#include "uvw/dns.h"
 
 #if defined(IP_TOS) && !defined(_WIN32)
 #define SET_IP_TOS(h)                                                      \

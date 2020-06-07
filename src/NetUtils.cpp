@@ -1,6 +1,7 @@
 #include "NetUtils.hpp"
 #include "ssrutils.h"
-#include "uvw_single.hpp"
+#include "uvw/dns.h"
+#include "uvw/loop.h"
 #include <cstring>
 
 int ssr_get_sock_addr(std::shared_ptr<uvw::Loop> loop, const char* host, int port, struct sockaddr_storage* storage, int ipv6first)

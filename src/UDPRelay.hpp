@@ -3,7 +3,8 @@
 
 #include <memory>
 
-#include "uvw_single.hpp"
+#include "uvw/loop.h"
+#include "uvw/udp.h"
 #include <cstdint>
 #include <unordered_map>
 

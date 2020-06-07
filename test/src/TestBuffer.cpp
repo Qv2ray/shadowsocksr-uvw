@@ -1,5 +1,6 @@
 #include <Buffer.hpp>
-#include <uvw_single.hpp>
+#include "uvw/udp.h"
+#include "uvw/tcp.h"
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
