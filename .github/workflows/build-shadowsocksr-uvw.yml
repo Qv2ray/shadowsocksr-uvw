@@ -151,6 +151,6 @@ jobs:
         with:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
             file: release.7z
-            asset_name: srr-local-${{ matrix.platform}}-${{ matrix.arch }}.7z
+            asset_name: ssr-local-${{ matrix.platform}}-${{ matrix.arch }}.7z
             tag: release
             overwrite: true
