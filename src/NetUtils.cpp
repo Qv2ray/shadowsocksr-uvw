@@ -42,12 +42,12 @@ int ssr_get_sock_addr(std::shared_ptr<uvw::Loop> loop, const char* host, int por
             }
         }
         if (rp == nullptr) {
-            LOGE("remote ssr server DNS not resolved");
+            LOGE("DNS not resolved %s:%d", host, port);
             return -1; // dns not resolved
         }
         return 0;
     } else {
-        LOGE("remote ssr server DNS not resolved");
+        LOGE("DNS not resolved %s:%d", host, port);
         return -1; // dns not resolved
     }
     return -1;

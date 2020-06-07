@@ -75,9 +75,7 @@ private:
     std::unordered_map<uvw::Addr, std::shared_ptr<UDPConnectionContext>, SockaddrHasher, SockAddrEqual> socketCache;
     int packet_size { DEFAULT_PACKET_SIZE };
     int buf_size { DEFAULT_PACKET_SIZE * 2 };
-    struct sockaddr_storage remoteAddr
-    {
-    };
+    sockaddr_storage remoteAddr {};
 };
 
 #endif //SHADOWSOCKSR_UVW_UDPRELAY_HPP

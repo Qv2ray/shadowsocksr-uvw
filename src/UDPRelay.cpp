@@ -1,6 +1,7 @@
 #include "UDPRelay.hpp"
 #include "Buffer.hpp"
 #include "CipherEnv.hpp"
+#include "NetUtils.hpp"
 #include "UDPConnectionContext.hpp"
 #include "ssrutils.h"
 
@@ -79,7 +80,12 @@ int UDPRelay::initUDPRelay(int mtu, const char* host, int port, struct sockaddr_
     udpServer->on<uvw::ErrorEvent>([this](auto& e, auto& h) {
         LOGE("[udp]local error %s", e.what());
     });
-    udpServer->bind(host, port, uvw::Flags<uvw::UDPHandle::Bind>::from<uvw::UDPHandle::Bind::REUSEADDR>());
+    sockaddr_storage localStorage;
+    if (ssr_get_sock_addr(loop, host, port, &localStorage, 0) != 0) {
+        LOGE("[udp]can't bind to %s:%d", host, port);
+        return -1;
+    }
+    udpServer->bind(reinterpret_cast<const sockaddr&>(localStorage), uvw::Flags<uvw::UDPHandle::Bind>::from<uvw::UDPHandle::Bind::REUSEADDR>());
     SET_IP_TOS(udpServer);
     udpServer->on<uvw::UDPDataEvent>([this](auto& e, auto& h) {
         localBuf = std::make_unique<Buffer>();

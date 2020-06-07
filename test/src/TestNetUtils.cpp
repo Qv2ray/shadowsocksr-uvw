@@ -7,12 +7,8 @@
 TEST_CASE("GetSockAddr for IPv4", "[netutils]")
 {
     auto loop = uvw::Loop::create();
-    struct sockaddr_storage storage
-    {
-    };
-    struct sockaddr_storage storage2
-    {
-    };
+    sockaddr_storage storage {};
+    sockaddr_storage storage2 {};
     auto ip = "220.181.38.148";
     auto port = 443;
     int res = ssr_get_sock_addr(loop, ip, port, &storage, true);
@@ -25,15 +21,33 @@ TEST_CASE("GetSockAddr for IPv4", "[netutils]")
     }
 }
 
+TEST_CASE("GetSockAddr for IPv4 invalid", "[netutils]")
+{
+    auto loop = uvw::Loop::create();
+    sockaddr_storage storage {};
+    sockaddr_storage storage2 {};
+    auto ip = "299.299.299.299";
+    auto port = 443;
+    int res = ssr_get_sock_addr(loop, ip, port, &storage, true);
+    REQUIRE(res != 0);
+}
+
+TEST_CASE("GetSockAddr for IPv6 invalid", "[netutils]")
+{
+    auto loop = uvw::Loop::create();
+    sockaddr_storage storage {};
+    sockaddr_storage storage2 {};
+    auto ip = "fe80::1::2";
+    auto port = 443;
+    int res = ssr_get_sock_addr(loop, ip, port, &storage, true);
+    REQUIRE(res != 0);
+}
+
 TEST_CASE("GetSockAddr for IPv6", "[netutils]")
 {
     auto loop = uvw::Loop::create();
-    struct sockaddr_storage storage
-    {
-    };
-    struct sockaddr_storage storage2
-    {
-    };
+    sockaddr_storage storage {};
+    sockaddr_storage storage2 {};
     auto ip = "2607:f8b0:4007:804::200e";
     auto port = 443;
     int res = ssr_get_sock_addr(loop, ip, port, &storage, true);
@@ -49,12 +63,8 @@ TEST_CASE("GetSockAddr for IPv6", "[netutils]")
 TEST_CASE("GetSockAddr for host ipv4", "[netutils]")
 {
     auto loop = uvw::Loop::create();
-    struct sockaddr_storage storage
-    {
-    };
-    struct sockaddr_storage storage2
-    {
-    };
+    sockaddr_storage storage {};
+    sockaddr_storage storage2 {};
     auto host = "google.com";
     auto port = 443;
     int res = ssr_get_sock_addr(loop, host, port, &storage, false);
@@ -88,12 +98,8 @@ TEST_CASE("GetSockAddr for host ipv4", "[netutils]")
 TEST_CASE("GetSockAddr for host ipv6", "[netutils]")
 {
     auto loop = uvw::Loop::create();
-    struct sockaddr_storage storage
-    {
-    };
-    struct sockaddr_storage storage2
-    {
-    };
+    sockaddr_storage storage {};
+    sockaddr_storage storage2 {};
     auto host = "ipv6.google.com";
     auto port = 443;
     int res = ssr_get_sock_addr(loop, host, port, &storage, true);
