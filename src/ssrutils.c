@@ -26,22 +26,11 @@
 
 #include "ssrutils.h"
 
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#define INT_DIGITS 19 /* enough for 64 bit integer */
-
-#ifdef LIB_ONLY
-FILE* logfile;
-#endif
-
-#ifdef HAS_SYSLOG
-int use_syslog = 0;
-#endif
-
-int use_tty = 1;
+int use_tty = 0;
 
 struct tm* ssr_safe_localtime(time_t* t, struct tm* tp)
 {
@@ -52,60 +41,6 @@ struct tm* ssr_safe_localtime(time_t* t, struct tm* tp)
 #else
     return localtime_r(t, tp);
 #endif
-}
-
-char* ss_itoa(int i)
-{
-    /* Room for INT_DIGITS digits, - and '\0' */
-    static char buf[INT_DIGITS + 2];
-    char* p = buf + INT_DIGITS + 1; /* points to terminating '\0' */
-    if (i >= 0) {
-        do {
-            *--p = '0' + (i % 10);
-            i /= 10;
-        } while (i != 0);
-        return p;
-    } else { /* i < 0 */
-        do {
-            *--p = '0' - (i % 10);
-            i /= 10;
-        } while (i != 0);
-        *--p = '-';
-    }
-    return p;
-}
-
-int ss_isnumeric(const char* s)
-{
-    if (!s || !*s)
-        return 0;
-    while (isdigit(*s))
-        ++s;
-    return *s == '\0';
-}
-
-char* ss_strndup(const char* s, size_t n)
-{
-    size_t len = strlen(s);
-    char* ret;
-
-    if (len <= n) {
-        return strdup(s);
-    }
-
-    ret = ss_malloc(n + 1);
-    strncpy(ret, s, n);
-    ret[n] = '\0';
-    return ret;
-}
-
-char* ss_strdup(const char* s)
-{
-    if (!s) {
-        return NULL;
-    }
-
-    return strdup(s);
 }
 
 void FATAL(const char* msg)

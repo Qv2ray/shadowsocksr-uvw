@@ -1,5 +1,6 @@
 #if !defined(_WIN32)
 #include <getopt.h>
+#include <unistd.h>
 #else
 #include "win/getopt.h"
 #endif
@@ -184,6 +185,7 @@ int main(int argc, char** argv)
         usage();
         exit(EXIT_FAILURE);
     }
+    USE_TTY();
     signal(SIGINT, sigintHandler);
     start_ssr_uv_local_server(p);
     return 0;
