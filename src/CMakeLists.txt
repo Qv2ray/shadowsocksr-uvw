@@ -11,7 +11,8 @@ endif ()
 
 
 set(USE_CRYPTO_OPENSSL 1)
-set(UVW_SOURCE
+
+set(SOURCE_FILES_LOCAL
         uvw/async.cpp
         uvw/check.cpp
         uvw/dns.cpp
@@ -35,12 +36,6 @@ set(UVW_SOURCE
         uvw/util.cpp
         uvw/work.cpp
         uvw/udp.cpp
-        )
-add_library(UVW_LIB STATIC ${UVW_SOURCE})
-target_link_libraries(UVW_LIB ${LibUV_LIBRARIES})
-target_compile_definitions(UVW_LIB PUBLIC UVW_AS_LIB)
-
-set(SOURCE_FILES_LOCAL
         ssrutils.h
         obfs/crc32.h
         obfs/auth.c
@@ -80,6 +75,7 @@ set(SOURCE_FILES_LOCAL
         NetUtils.cpp
         UDPConnectionContext.cpp UDPConnectionContext.hpp UDPRelay.cpp UDPRelay.hpp)
 add_library(shadowsocksr-uvw-common OBJECT ${SOURCE_FILES_LOCAL})
+target_compile_definitions(shadowsocksr-uvw-common PUBLIC UVW_AS_LIB)
 if (SSR_UVW_WITH_QT)
     message("find Qt5")
     find_package(Qt5 COMPONENTS Core REQUIRED)
@@ -112,7 +108,6 @@ set(
         ${LibUV_LIBRARIES}
         ${WINSOCK2}
         ${CRYPT32}
-        UVW_LIB
 )
 
 set(ssr_crypto
