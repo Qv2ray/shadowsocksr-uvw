@@ -12,30 +12,30 @@ endif ()
 
 set(USE_CRYPTO_OPENSSL 1)
 set(UVW_SOURCE
-    uvw/async.cpp
-    uvw/check.cpp
-    uvw/dns.cpp
-    uvw/emitter.cpp
-    uvw/fs.cpp
-    uvw/fs_event.cpp
-    uvw/fs_poll.cpp
-    uvw/idle.cpp
-    uvw/lib.cpp
-    uvw/loop.cpp
-    uvw/pipe.cpp
-    uvw/poll.cpp
-    uvw/prepare.cpp
-    uvw/process.cpp
-    uvw/signal.cpp
-    uvw/stream.cpp
-    uvw/tcp.cpp
-    uvw/thread.cpp
-    uvw/timer.cpp
-    uvw/tty.cpp
-    uvw/util.cpp
-    uvw/work.cpp
-    uvw/udp.cpp
-    )
+        uvw/async.cpp
+        uvw/check.cpp
+        uvw/dns.cpp
+        uvw/emitter.cpp
+        uvw/fs.cpp
+        uvw/fs_event.cpp
+        uvw/fs_poll.cpp
+        uvw/idle.cpp
+        uvw/lib.cpp
+        uvw/loop.cpp
+        uvw/pipe.cpp
+        uvw/poll.cpp
+        uvw/prepare.cpp
+        uvw/process.cpp
+        uvw/signal.cpp
+        uvw/stream.cpp
+        uvw/tcp.cpp
+        uvw/thread.cpp
+        uvw/timer.cpp
+        uvw/tty.cpp
+        uvw/util.cpp
+        uvw/work.cpp
+        uvw/udp.cpp
+        )
 add_library(UVW_LIB STATIC ${UVW_SOURCE})
 target_link_libraries(UVW_LIB ${LibUV_LIBRARIES})
 target_compile_definitions(UVW_LIB PUBLIC UVW_AS_LIB)
@@ -60,7 +60,6 @@ set(SOURCE_FILES_LOCAL
         obfs/obfsutil.h
         ObfsClass.hpp
         ObfsClass.cpp
-        local_uv.cpp
         Buffer.hpp
         encrypt.c
         ConnectionContext.hpp
@@ -80,6 +79,7 @@ set(SOURCE_FILES_LOCAL
         NetUtils.hpp
         NetUtils.cpp
         UDPConnectionContext.cpp UDPConnectionContext.hpp UDPRelay.cpp UDPRelay.hpp)
+add_library(shadowsocksr-uvw-common OBJECT ${SOURCE_FILES_LOCAL})
 if (SSR_UVW_WITH_QT)
     message("find Qt5")
     find_package(Qt5 COMPONENTS Core REQUIRED)
@@ -88,8 +88,11 @@ if (SSR_UVW_WITH_QT)
             ${ssr_thread_moc}
             SSRThread.cpp
             qt_ui_log.cpp
-            ${SOURCE_FILES_LOCAL})
-    add_library(${PROJECT_NAME}-qt STATIC ${SOURCE_FILES_LOCAL_QT})
+            ssr_log_utils.cpp
+            local_uv.cpp
+            #local_uv.cpp uses macro SSR_UVW_WITH_QT,so it's not part of shadowsocksr-uvw-common
+            )
+    add_library(${PROJECT_NAME}-qt STATIC ${SOURCE_FILES_LOCAL_QT} $<TARGET_OBJECTS:shadowsocksr-uvw-common>)
     target_compile_definitions(${PROJECT_NAME}-qt PUBLIC SSR_UVW_WITH_QT UVW_AS_LIB)
     set_target_properties(${PROJECT_NAME}-qt PROPERTIES POSITION_INDEPENDENT_CODE 1)
     add_library(shadowsocksr::uvw::qt ALIAS ${PROJECT_NAME}-qt)
@@ -98,7 +101,8 @@ include_directories(${LibUV_INCLUDE_DIR})
 include_directories(${libsodium_include_dirs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES_LOCAL})
+add_library(${PROJECT_NAME} STATIC local_uv.cpp ssr_log_utils.cpp $<TARGET_OBJECTS:shadowsocksr-uvw-common>)
+#local_uv.cpp uses macro SSR_UVW_WITH_QT,so it's not part of shadowsocksr-uvw-common
 add_library(shadowsocksr::uvw ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE 1)
 target_compile_definitions(${PROJECT_NAME} PUBLIC UVW_AS_LIB)
@@ -125,17 +129,17 @@ endif ()
 target_include_directories(
         ${PROJECT_NAME}
         PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
- )
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
 
 target_link_libraries(${PROJECT_NAME}
-        ${ssr_crypto} ${COMMON_LINK_LIBS}
+        ${COMMON_LINK_LIBS} ${ssr_crypto}
         )
 if(NOT WIN32)
-    set(SSR_LOCAL_SOURCE ssr_local.cpp)
+    set(SSR_LOCAL_SOURCE ssr_local.cpp ssr_log_utils.cpp)
 else()
-    set(SSR_LOCAL_SOURCE ssr_local.cpp win/getopt.c)
+    set(SSR_LOCAL_SOURCE ssr_local.cpp win/getopt.c ssr_log_utils.cpp)
 endif()
-add_executable(ssr-local ${SOURCE_FILES_LOCAL} ${SSR_LOCAL_SOURCE})
-    target_compile_definitions(ssr-local PUBLIC UVW_AS_LIB)
-    target_link_libraries(ssr-local shadowsocksr::uvw)
+add_executable(ssr-local ${SSR_LOCAL_SOURCE})
+target_compile_definitions(ssr-local PUBLIC UVW_AS_LIB)
+target_link_libraries(ssr-local shadowsocksr::uvw)

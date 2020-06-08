@@ -2,9 +2,9 @@
 #define SHADOWSOCKSR_UVW_UDPCONNECTIONCONTEXT_HPP
 #include <memory>
 
-#include "uvw/udp.h"
-#include "uvw/timer.h"
 #include "uvw/loop.h"
+#include "uvw/timer.h"
+#include "uvw/udp.h"
 
 class Buffer;
 

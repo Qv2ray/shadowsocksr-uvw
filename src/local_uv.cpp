@@ -2,8 +2,8 @@
 #include "ssrutils.h"
 #include "uvw/loop.h"
 #include "uvw/stream.h"
-#include "uvw/timer.h"
 #include "uvw/tcp.h"
+#include "uvw/timer.h"
 
 #include <memory>
 #include <unordered_map>
@@ -20,6 +20,9 @@
 #include "ObfsClass.hpp"
 #include "UDPRelay.hpp"
 #include "shadowsocksr.h"
+#ifdef SSR_UVW_WITH_QT
+#include "qt_ui_log.h"
+#endif
 #include <cstdint>
 
 class TCPRelay
