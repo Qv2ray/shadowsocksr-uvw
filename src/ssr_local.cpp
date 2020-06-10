@@ -83,7 +83,7 @@ void sigintHandler(int sig_num)
        Refer http://en.cppreference.com/w/c/program/signal */
     signal(SIGINT, sigintHandler);
     stop_ssr_uv_local_server();
-    printf("\n Waiting main loop to exit\n");
+    LOGI("waiting main loop to exit");
     fflush(stdout);
 }
 
