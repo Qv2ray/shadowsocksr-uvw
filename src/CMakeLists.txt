@@ -115,6 +115,11 @@ set(ssr_crypto
         ${sodium_LIBRARIES}
         )
 
+if(WIN32)
+    target_link_libraries(shadowsocksr-uvw-common 
+        ${COMMON_LINK_LIBS} ${ssr_crypto})
+endif()
+
 if (SSR_UVW_WITH_QT)
     target_link_libraries(${PROJECT_NAME}-qt Qt5::Core
             ${COMMON_LINK_LIBS} ${ssr_crypto}
