@@ -15,7 +15,7 @@ function(ADD_SSR_UVW_TEST TEST_NAME TEST_SOURCE)
     target_link_libraries(
             ${TEST_NAME}
             PRIVATE
-            $<$<TARGET_EXISTS:shadowsocksr::uvw>:shadowsocksr::uvw>
+            shadowsocksr::uvw
             ${LIBRT}
             ${WINSOCK2}
     )
