@@ -4,6 +4,20 @@
 #include "catch.hpp"
 #include <cstring>
 
+namespace
+{
+bool cmp_sockaddr_storage(sockaddr_storage& storage, sockaddr_storage& storage2)
+{
+    for (auto i = 0; i < sizeof(sockaddr_storage); ++i) {
+        auto storage_ptr = reinterpret_cast<char*>(&storage);
+        auto storage2_ptr = reinterpret_cast<char*>(&storage2);
+        if (storage_ptr[i] != storage2_ptr[i])
+            return false;
+    }
+    return true;
+}
+}
+
 TEST_CASE("GetSockAddr for IPv4", "[netutils]")
 {
     auto loop = uvw::Loop::create();
@@ -80,19 +94,18 @@ TEST_CASE("GetSockAddr for host ipv4", "[netutils]")
     REQUIRE(res == 0);
     struct addrinfo* rp = nullptr;
     std::unique_ptr<struct addrinfo, decltype(uv_freeaddrinfo)*> guard { req.addrinfo, &uv_freeaddrinfo };
+    bool equal = false;
     for (rp = req.addrinfo; rp != nullptr; rp = rp->ai_next)
         if (rp->ai_family == AF_INET) {
             if (rp->ai_family == AF_INET)
                 memcpy(&storage2, rp->ai_addr, sizeof(struct sockaddr_in));
             else if (rp->ai_family == AF_INET6)
                 memcpy(&storage2, rp->ai_addr, sizeof(struct sockaddr_in6));
-            break;
+            equal = cmp_sockaddr_storage(storage, storage2);
+            if (equal)
+                break;
         }
-    for (auto i = 0; i < sizeof(sockaddr_storage); ++i) {
-        auto storage_ptr = reinterpret_cast<char*>(&storage);
-        auto storage2_ptr = reinterpret_cast<char*>(&storage2);
-        REQUIRE(storage_ptr[i] == storage2_ptr[i]);
-    }
+    REQUIRE(equal == true);
 }
 
 TEST_CASE("GetSockAddr for host ipv6", "[netutils]")
@@ -115,17 +128,16 @@ TEST_CASE("GetSockAddr for host ipv6", "[netutils]")
     REQUIRE(res == 0);
     struct addrinfo* rp = nullptr;
     std::unique_ptr<struct addrinfo, decltype(uv_freeaddrinfo)*> guard { req.addrinfo, &uv_freeaddrinfo };
+    bool equal = false;
     for (rp = req.addrinfo; rp != nullptr; rp = rp->ai_next)
         if (rp->ai_family == AF_INET6) {
             if (rp->ai_family == AF_INET)
                 memcpy(&storage2, rp->ai_addr, sizeof(struct sockaddr_in));
             else if (rp->ai_family == AF_INET6)
                 memcpy(&storage2, rp->ai_addr, sizeof(struct sockaddr_in6));
-            break;
+            equal = cmp_sockaddr_storage(storage, storage2);
+            if (equal)
+                break;
         }
-    for (auto i = 0; i < sizeof(sockaddr_storage); ++i) {
-        auto storage_ptr = reinterpret_cast<char*>(&storage);
-        auto storage2_ptr = reinterpret_cast<char*>(&storage2);
-        REQUIRE(storage_ptr[i] == storage2_ptr[i]);
-    }
+    REQUIRE(equal == true);
 }
