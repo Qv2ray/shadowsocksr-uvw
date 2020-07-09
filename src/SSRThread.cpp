@@ -60,7 +60,7 @@ SSRThread::SSRThread(int localPort,
 
 SSRThread::~SSRThread()
 {
-    tcpRelay->stop();
+    stop();
 }
 
 void SSRThread::run()
