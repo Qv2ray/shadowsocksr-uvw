@@ -20,12 +20,13 @@
 #include "ObfsClass.hpp"
 #include "UDPRelay.hpp"
 #include "shadowsocksr.h"
+#include "TCPRelay.hpp"
 #ifdef SSR_UVW_WITH_QT
 #include "qt_ui_log.h"
 #endif
 #include <cstdint>
 
-class TCPRelay
+class TCPRelayImpl : public virtual TCPRelay
 {
 private:
     static constexpr int SVERSION = 0x05;
@@ -62,22 +63,29 @@ private:
     }
 
 public:
-    static TCPRelay& getInstance()
+    TCPRelayImpl() = default;
+    static TCPRelayImpl& getDefaultInstance()
     {
-        static TCPRelay instance;
+        static TCPRelayImpl instance;
         return instance;
     }
 
-    static void stopInstance()
+    static void stopDefaultInstance()
     {
-        getInstance().stop();
+        getDefaultInstance().stop();
     }
 
-private:
-    void stop()
+    void stop() override
     {
         isStop = true;
     }
+
+    ~TCPRelayImpl() override
+    {
+        isStop = true;
+    }
+
+private:
 
     void handShakeReceive(const uvw::DataEvent& event, uvw::TCPHandle& client)
     {
@@ -364,7 +372,7 @@ private:
     }
 
 public:
-    int loopMain(profile_t& p)
+    int loopMain(profile_t& p) override
     {
         verbose = p.verbose;
         profile = p;
@@ -419,13 +427,16 @@ public:
         return 0;
     }
 
-private:
-    TCPRelay() = default;
 };
+
+std::shared_ptr<TCPRelay> TCPRelay::create()
+{
+    return std::shared_ptr<TCPRelay>{new TCPRelayImpl};
+}
 
 int start_ssr_uv_local_server(profile_t profile)
 {
-    auto& ssr = TCPRelay::getInstance();
+    auto& ssr = TCPRelayImpl::getDefaultInstance();
     int res = ssr.loopMain(profile);
     if (res)
         return res;
@@ -434,6 +445,6 @@ int start_ssr_uv_local_server(profile_t profile)
 
 int stop_ssr_uv_local_server()
 {
-    TCPRelay::stopInstance();
+    TCPRelayImpl::stopDefaultInstance();
     return 0;
 }

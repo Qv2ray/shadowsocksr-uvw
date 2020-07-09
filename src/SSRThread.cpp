@@ -1,6 +1,5 @@
 #include "SSRThread.hpp"
-
-#include "shadowsocksr.h"
+#include "TCPRelay.hpp"
 SSRThread::SSRThread(int localPort,
     int remotePort,
     std::string local_addr,
@@ -21,6 +20,7 @@ SSRThread::SSRThread(int localPort,
     , obfs_param(std::move(obfs_param))
     , protocol(std::move(protocol))
     , protocol_param(std::move(protocol_param))
+    , tcpRelay(TCPRelay::create())
 {
 }
 
@@ -54,12 +54,13 @@ SSRThread::SSRThread(int localPort,
     , protocol_param(std::move(protocol_param))
     , ipv6first(ipv6first)
     , verbose(verbose)
+    , tcpRelay(TCPRelay::create())
 {
 }
 
 SSRThread::~SSRThread()
 {
-    stop();
+    tcpRelay->stop();
 }
 
 void SSRThread::run()
@@ -82,13 +83,13 @@ void SSRThread::run()
     profile.fast_open = 1; // libuv is not supported fastopen yet.
     profile.verbose = verbose;
     profile.ipv6first = ipv6first;
-    start_ssr_uv_local_server(profile);
+    tcpRelay->loopMain(profile);
 }
 
 void SSRThread::stop()
 {
     if (isRunning()) {
-        stop_ssr_uv_local_server();
+        tcpRelay->stop();
         wait();
     }
 }

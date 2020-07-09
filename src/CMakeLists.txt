@@ -73,6 +73,7 @@ set(SOURCE_FILES_LOCAL
         cache.c
         NetUtils.hpp
         NetUtils.cpp
+        TCPRelay.hpp
         UDPConnectionContext.cpp UDPConnectionContext.hpp UDPRelay.cpp UDPRelay.hpp)
 add_library(shadowsocksr-uvw-common OBJECT ${SOURCE_FILES_LOCAL})
 target_compile_definitions(shadowsocksr-uvw-common PUBLIC UVW_AS_LIB)

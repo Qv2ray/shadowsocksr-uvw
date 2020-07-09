@@ -1,7 +1,7 @@
 #ifndef SSRTHREAD_HPP
 #define SSRTHREAD_HPP
 #include <QThread>
-
+class TCPRelay;
 class SSRThread : public QThread
 {
     Q_OBJECT
@@ -61,6 +61,6 @@ private:
     std::string protocol_param;
     int ipv6first = 0;
     int verbose = 0;
-    QString inboundTag;
+    std::shared_ptr<TCPRelay> tcpRelay;
 };
 #endif // SSRTHREAD_HPP
