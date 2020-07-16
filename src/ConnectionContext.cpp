@@ -83,6 +83,7 @@ server_info_t ConnectionContext::construct_obfs(CipherEnv& cipherEnv, ObfsClass&
             if (p == nullptr)
                 return;
             enc_ctx_release(&this->cipherEnvPtr->cipher, p);
+            free(p);
         };
         e_ctx = { reinterpret_cast<struct enc_ctx*>(malloc(sizeof(struct enc_ctx))), encCtxRelease };
         d_ctx = { reinterpret_cast<struct enc_ctx*>(malloc(sizeof(struct enc_ctx))), encCtxRelease };
