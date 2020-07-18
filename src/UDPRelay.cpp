@@ -61,6 +61,7 @@ UDPRelay::UDPRelay(std::shared_ptr<uvw::Loop> loop, CipherEnv& cipherEnv, ObfsCl
 }
 UDPRelay::~UDPRelay()
 {
+    socketCache.clear();
     if (protocol_global) {
         free(protocol_global);
         protocol_global = nullptr;

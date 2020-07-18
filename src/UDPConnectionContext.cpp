@@ -4,6 +4,8 @@
 
 UDPConnectionContext::~UDPConnectionContext()
 {
+    if( timeoutTimer)
+        timeoutTimer->close();
     if (remote) {
         remote->clear();
         remote->close();
