@@ -14,61 +14,6 @@ typedef struct shift128plus_ctx
     uint64_t v[2];
 } shift128plus_ctx;
 
-void swap(int* x, int* y)
-{
-    int t = *x;
-    *x = *y;
-    *y = t;
-}
-
-// https://zh.wikipedia.org/wiki/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F
-void quick_sort_recursive(int arr[], int start, int end)
-{
-    if (start >= end)
-        return; //這是為了防止宣告堆疊陣列時當機
-    int mid = arr[end];
-    int left = start, right = end - 1;
-    while (left < right) {
-        while (arr[left] < mid && left < right)
-            left++;
-        while (arr[right] >= mid && left < right)
-            right--;
-        swap(&arr[left], &arr[right]);
-    }
-    if (arr[left] >= arr[end])
-        swap(&arr[left], &arr[end]);
-    else
-        left++;
-    if (left) {
-        quick_sort_recursive(arr, start, left - 1);
-    }
-    quick_sort_recursive(arr, left + 1, end);
-}
-
-void quick_sort(int arr[], int len)
-{
-    quick_sort_recursive(arr, 0, len - 1);
-}
-
-int array_bin_search(int start, int end, int array[], int value)
-{
-    int mid = (start + end) / 2;
-
-    if (start > end) {
-        if (value > array[start]) {
-            return start + 1;
-        } else {
-            return start;
-        }
-    }
-
-    if (array[mid] > value) {
-        return array_bin_search(start, mid - 1, array, value);
-    } else {
-        return array_bin_search(mid + 1, end, array, value);
-    }
-}
-
 uint64_t shift128plus_next(shift128plus_ctx* ctx)
 {
     uint64_t x = ctx->v[0];
