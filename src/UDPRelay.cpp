@@ -136,11 +136,6 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
      * +-------+--------------+
      *
      */
-    if (data.length > packet_size) {
-        LOGE("[udp] remote_recv_recvfrom fragmentation");
-        panic(data.sender);
-        return;
-    }
     int addr_header_len = 0;
     int frag = data.data[2];
     char host[257] = { 0 };
@@ -172,14 +167,22 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
         remoteSocket->on<uvw::ErrorEvent>([this](auto& e, auto& h) {
             LOGE("[udp]remote error %s", e.what());
         });
-        struct sockaddr_in addr;
-        memset(&addr, 0, sizeof(struct sockaddr_in));
-        addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = INADDR_ANY;
-        addr.sin_port = 0;
-
-        remoteSocket->bind(reinterpret_cast<const sockaddr&>(addr));
-        LOGI("[udp]:bind remote socket");
+        auto remoteAddrType = reinterpret_cast<sockaddr*>(&remoteAddr)->sa_family;
+        if (remoteAddrType == AF_INET6) {
+            struct sockaddr_in6 addr;
+            memset(&addr, 0, sizeof(struct sockaddr_in6));
+            addr.sin6_family = AF_INET6;
+            addr.sin6_addr = in6addr_any;
+            addr.sin6_port = 0;
+            remoteSocket->bind(reinterpret_cast<const sockaddr&>(addr));
+        } else {
+            struct sockaddr_in addr;
+            memset(&addr, 0, sizeof(struct sockaddr_in));
+            addr.sin_family = AF_INET;
+            addr.sin_addr.s_addr = INADDR_ANY;
+            addr.sin_port = 0;
+            remoteSocket->bind(reinterpret_cast<const sockaddr&>(addr));
+        }
         SET_IP_TOS(remoteSocket);
         remoteCtx = std::make_shared<UDPConnectionContext>(data.sender, remoteSocket);
         remoteCtx->initTimer(
@@ -199,11 +202,6 @@ void UDPRelay::serverRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle)
     localBuf->protocolPluginUDPPreEncrypt(*this);
     int err = localBuf->ssEncryptAll(*cipherEnvPtr);
     if (err) {
-        panic(data.sender);
-        return;
-    }
-    if (localBuf->length() > packet_size) {
-        LOGE("[udp] server_recv_sendto fragmentation");
         panic(data.sender);
         return;
     }
@@ -234,6 +232,7 @@ void UDPRelay::remoteRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle, const
         panic(localSrcAddr);
         return;
     } else if (ctx->remoteBuf->length() == 0) {
+        LOGI("UDP post decrypt is zero");
         return;
     }
     int len = parseUDPRelayHeader(*ctx->remoteBuf->getBufPtr(), ctx->remoteBuf->length(), NULL, NULL, NULL);
@@ -244,11 +243,6 @@ void UDPRelay::remoteRecv(uvw::UDPDataEvent& data, uvw::UDPHandle& handle, const
     }
     auto response = std::make_unique<char[]>(ctx->remoteBuf->length() + 3);
     memcpy(response.get() + 3, ctx->remoteBuf->begin(), ctx->remoteBuf->length());
-    if (ctx->remoteBuf->length() > packet_size) {
-        LOGE("[udp] remote_recv_sendto fragmentation");
-        panic(localSrcAddr);
-        return;
-    }
     ctx->resetTimeoutTimer();
     udpServer->send(ctx->srcAddr, std::move(response), ctx->remoteBuf->length() + 3);
     ctx->remoteBuf->setLength(0);
@@ -282,27 +276,13 @@ int UDPRelay::parseUDPRelayHeader(const char* buf, size_t buf_len, char* host, c
             if (storage != nullptr) {
                 char tmp[256] = { 0 };
                 memcpy(tmp, buf + offset + 1, name_len);
-                auto getAddrInfoReq = loop->resource<uvw::GetAddrInfoReq>();
-                //there use a dirty hack in uvw api. CHECK addrInfoSync to MODIFY.
-                //uvw addInfoSync don't support service or node be a nullptr
-                //which is not what we want.
-                auto dns_res = getAddrInfoReq->addrInfoSync(tmp, "");
-                if (dns_res.first) {
-                    if (dns_res.second->ai_family == AF_INET) {
-                        auto* addr = (struct sockaddr_in*)storage;
-                        uv_inet_pton(AF_INET, tmp, &(addr->sin_addr));
-                        memcpy(&addr->sin_port, buf + offset + 1 + name_len, sizeof(uint16_t));
-                        addr->sin_family = AF_INET;
-                    } else if (dns_res.second->ai_family == AF_INET6) {
-                        auto* addr = (struct sockaddr_in6*)storage;
-                        uv_inet_pton(AF_INET, tmp, &(addr->sin6_addr));
-                        memcpy(&addr->sin6_port, buf + offset + 1 + name_len, sizeof(uint16_t));
-                        addr->sin6_family = AF_INET6;
-                    }
+                if (uv_ip4_addr(tmp, 0, reinterpret_cast<sockaddr_in*>(storage)) == 0) {
+                    auto addr = reinterpret_cast<sockaddr_in*>(storage);
+                    memcpy(&addr->sin_port, buf + offset + 1 + name_len, sizeof(uint16_t));
                 }
-                if (!dns_res.first) {
-                    LOGE("[udp] parse udp header DNS not resolved");
-                    return 0; // dns not resolved
+                if (uv_ip6_addr(tmp, 0, reinterpret_cast<sockaddr_in6*>(storage)) == 0) {
+                    auto addr = reinterpret_cast<sockaddr_in6*>(storage);
+                    memcpy(&addr->sin6_port, buf + offset + 1 + name_len, sizeof(uint16_t));
                 }
             }
             if (host != nullptr) {
