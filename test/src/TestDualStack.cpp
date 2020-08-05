@@ -6,6 +6,7 @@
 TEST_CASE("Dual-Stack", "[tcp]")
 {
     auto loop = uvw::Loop::create();
+
     auto tcpServer = loop->resource<uvw::TCPHandle>();
     struct sockaddr_in6 sin6;
     sin6.sin6_family = AF_INET6;
@@ -65,6 +66,9 @@ TEST_CASE("Single-Stack", "[tcp]")
         std::cout << "peer:" << socket->peer<uvw::IPv6>().ip << std::endl;
     });
 
+    client1->once<uvw::ErrorEvent>([](auto&, uvw::TCPHandle& handle) {
+        handle.close();
+    });
     client1->once<uvw::ConnectEvent>([](const uvw::ConnectEvent&, uvw::TCPHandle& handle) {
         handle.close();
     });
