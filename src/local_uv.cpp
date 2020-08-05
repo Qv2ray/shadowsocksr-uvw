@@ -18,9 +18,9 @@
 #include "ConnectionContext.hpp"
 #include "NetUtils.hpp"
 #include "ObfsClass.hpp"
+#include "TCPRelay.hpp"
 #include "UDPRelay.hpp"
 #include "shadowsocksr.h"
-#include "TCPRelay.hpp"
 #ifdef SSR_UVW_WITH_QT
 #include "qt_ui_log.h"
 #endif
@@ -86,7 +86,6 @@ public:
     }
 
 private:
-
     void handShakeReceive(const uvw::DataEvent& event, uvw::TCPHandle& client)
     {
         if (event.data[0] == 0x05 && event.length > 1) {
@@ -112,6 +111,7 @@ private:
             ++buf_atyp_ptr;
             return 4 + static_cast<uint8_t>(*buf_atyp_ptr);
         }
+        LOGE("Received an unknown atyp value:%d,atyp&0x7:%d", (int)buf_atyp_ptr[0], (int)(buf_atyp_ptr[0] & 0x7));
         return 30; // can't reach here.
     }
 
@@ -122,7 +122,7 @@ private:
         buf.copy(event);
         if (socks5_address_parse((uint8_t*)buf.begin() + 3, buf.length() - 3, &address)) {
             buf.drop(3);
-            connectionContext.construct_obfs(*cipherEnv, *obfsClass, profile, server_info_head_len(buf.begin() + 3));
+            connectionContext.construct_obfs(*cipherEnv, *obfsClass, profile, server_info_head_len(buf.begin()));
             startConnect(client);
         } else {
             client.once<uvw::DataEvent>([this](auto& e, auto& h) { readAllAddress(e, h); });
@@ -153,7 +153,7 @@ private:
             case 0x01:
                 if (buf.length() != 0 && socks5_address_parse((uint8_t*)buf.begin() + 3, buf.length() - 3, &address)) {
                     buf.drop(3);
-                    connectionContext.construct_obfs(*cipherEnv, *obfsClass, profile, server_info_head_len(buf.begin() + 3));
+                    connectionContext.construct_obfs(*cipherEnv, *obfsClass, profile, server_info_head_len(buf.begin()));
                     startConnect(client);
                 } else {
                     client.once<uvw::DataEvent>([this](auto& e, auto& h) { readAllAddress(e, h); });
@@ -426,12 +426,11 @@ public:
         loop->run();
         return 0;
     }
-
 };
 
 std::shared_ptr<TCPRelay> TCPRelay::create()
 {
-    return std::shared_ptr<TCPRelay>{new TCPRelayImpl};
+    return std::shared_ptr<TCPRelay> { new TCPRelayImpl };
 }
 
 int start_ssr_uv_local_server(profile_t profile)
