@@ -73,6 +73,8 @@ void Buffer::drop(size_t size)
 
 void Buffer::bufRealloc(size_t size)
 {
+    if (buf->capacity == size)
+        return;
     buf->array = reinterpret_cast<char*>(realloc(buf->array, size * sizeof(char)));
     buf->capacity = size;
     buf->len = buf->capacity < buf->len ? buf->capacity : buf->len;
@@ -92,9 +94,8 @@ void Buffer::copy(const uvw::DataEvent& event)
     if (event.length + buf->len <= buf->capacity) {
         this->copy(event.data.get(), event.data.get() + event.length);
         return;
-    } else if (buf->len < buf->capacity) {
-        bufRealloc(event.length * 2);
-        buf->capacity = event.length * 2;
+    } else {
+        bufRealloc((buf->len + event.length) * 2);
         this->copy(event.data.get(), event.data.get() + event.length);
         return;
     }
@@ -107,9 +108,8 @@ void Buffer::copy(const uvw::UDPDataEvent& event)
     if (event.length + buf->len <= buf->capacity) {
         this->copy(event.data.get(), event.data.get() + event.length);
         return;
-    } else if (buf->len < buf->capacity) {
-        bufRealloc(event.length * 2);
-        buf->capacity = event.length * 2;
+    } else {
+        bufRealloc((buf->len + event.length) * 2);
         this->copy(event.data.get(), event.data.get() + event.length);
         return;
     }
@@ -119,14 +119,28 @@ void Buffer::copyFromBegin(const uvw::DataEvent& event, int length)
 {
     auto start = event.data.get();
     auto size = length == -1 ? event.length : length;
-    memcpy(begin(), start, size);
-    buf->len = size;
+    buf->len = 0;
+    if (size <= buf->capacity) {
+        this->copy(start, start + size);
+        return;
+    } else {
+        bufRealloc((size)*2);
+        this->copy(start, start + size);
+        return;
+    }
 }
 
 void Buffer::copyFromBegin(char* start, size_t size)
 {
-    memcpy(begin(), start, size);
-    buf->len = size;
+    buf->len = 0;
+    if (size <= buf->capacity) {
+        this->copy(start, start + size);
+        return;
+    } else {
+        bufRealloc((size)*2);
+        this->copy(start, start + size);
+        return;
+    }
 }
 
 void Buffer::copy(const Buffer& that)
