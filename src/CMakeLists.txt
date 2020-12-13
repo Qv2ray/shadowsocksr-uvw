@@ -78,9 +78,12 @@ set(SOURCE_FILES_LOCAL
 add_library(shadowsocksr-uvw-common OBJECT ${SOURCE_FILES_LOCAL})
 target_compile_definitions(shadowsocksr-uvw-common PUBLIC UVW_AS_LIB)
 if (SSR_UVW_WITH_QT)
-    message("find Qt5")
-    find_package(Qt5 COMPONENTS Core REQUIRED)
-    qt5_wrap_cpp(ssr_thread_moc SSRThread.hpp)
+    if(NOT QV_QT_LIBNAME)
+        set(QV_QT_LIBNAME Qt5)
+    endif()
+    message("find ${QV_QT_LIBNAME}")
+    find_package(${QV_QT_LIBNAME} COMPONENTS Core REQUIRED)
+    qt_wrap_cpp(ssr_thread_moc SSRThread.hpp)
     set(SOURCE_FILES_LOCAL_QT
             ${ssr_thread_moc}
             SSRThread.cpp
@@ -122,7 +125,7 @@ if(WIN32)
 endif()
 
 if (SSR_UVW_WITH_QT)
-    target_link_libraries(${PROJECT_NAME}-qt Qt5::Core
+    target_link_libraries(${PROJECT_NAME}-qt ${QV_QT_LIBNAME}::Core
             ${COMMON_LINK_LIBS} ${ssr_crypto}
             )
 endif ()
