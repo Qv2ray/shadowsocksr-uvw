@@ -83,6 +83,12 @@ if (SSR_UVW_WITH_QT)
     endif()
     message("find ${QV_QT_LIBNAME}")
     find_package(${QV_QT_LIBNAME} COMPONENTS Core REQUIRED)
+    if (NOT DEFINED qt_wrap_cpp)
+      function(qt_wrap_cpp outfiles)
+        qt5_wrap_cpp(${outfiles} ${ARGN})
+        set(${outfiles} ${${outfiles}} PARENT_SCOPE)
+      endfunction()
+    endif()
     qt_wrap_cpp(ssr_thread_moc SSRThread.hpp)
     set(SOURCE_FILES_LOCAL_QT
             ${ssr_thread_moc}
